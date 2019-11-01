@@ -17,6 +17,7 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
+import edu.wpi.cs.justice.cardmaker.db.CardDAO;
 import edu.wpi.cs.justice.cardmaker.http.CreateCardRequest;
 import edu.wpi.cs.justice.cardmaker.http.CreateCardResponse;
 import edu.wpi.cs.justice.cardmaker.model.Card;
@@ -31,16 +32,14 @@ public class CreateCardHandler implements RequestStreamHandler {
 	
 	Card createCard(String eventType, String recipient, String orientation) throws Exception {
 		if (logger != null) { logger.log("in createCard"); }
-//		CardsDAO dao = new CardsDAO();
+		CardDAO dao = new CardDAO();
 		
 		final String cardId = UUID.randomUUID().toString().replace("-", "");
 		Card card = new Card (cardId, eventType, recipient, orientation);
 		
-//		if (dao.addCard(card)) {
-//			return card;
-//		}
-//		
-//		return null;
+		if (dao.addCard(card)) {
+			return card;
+		}
 		
 		return card;
 	}
@@ -69,7 +68,7 @@ public class CreateCardHandler implements RequestStreamHandler {
 			JSONObject event = (JSONObject) parser.parse(reader);
 			logger.log("event:" + event.toJSONString());
 
-			body = (String)event.get("body");
+			body = ((JSONObject) event.get("body")).toJSONString();
 			if (body == null) {
 				body = event.toJSONString();  // this is only here to make testing easier
 			}
