@@ -16,7 +16,7 @@ public class ListCardsResponse {
 		this.error = "";
 	}
 	
-	public ListCardsResponse (int code, String errorMessage) {
+	public ListCardsResponse (String errorMessage, int code) {
 		this.cardsList = new ArrayList<Card>();
 		this.statusCode = code;
 		this.error = errorMessage;
