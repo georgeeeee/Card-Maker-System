@@ -35,7 +35,7 @@ public class CardDAO {
 
     public boolean deleteCard(String cardId) throws Exception {
         try {
-            PreparedStatement ps = conn.prepareStatement("DELETE FROM constants WHERE card_id = ?;");
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM cards WHERE card_id = ?;");
             ps.setString(1, cardId);
             int numAffected = ps.executeUpdate();
             ps.close();

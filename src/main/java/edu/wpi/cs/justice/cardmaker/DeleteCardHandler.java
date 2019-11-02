@@ -48,7 +48,7 @@ public class DeleteCardHandler implements RequestStreamHandler {
 			JSONObject event = (JSONObject) parser.parse(reader);
 			logger.log("event:" + event.toJSONString());
 
-			body = (String)event.get("body");
+			body = ((JSONObject) event.get("body")).toJSONString();
 			if (body == null) {
 				body = event.toJSONString();  // this is only here to make testing easier
 			}
