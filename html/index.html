@@ -3,26 +3,32 @@
     <script type="text/javascript">
         var add_url = "https://4547fey8hf.execute-api.us-east-1.amazonaws.com/beta/calculator";
 
-        function processResponse(arg1, arg2, result) {
+        function processResponse(card) {
         // Can grab any DIV or SPAN HTML element and can then manipulate its
         // contents dynamically via javascript
-        console.log("result:" + result);
-        var js = JSON.parse(result);
+        console.log("card: " + card);
+        var js = JSON.parse(card);
 
-        var computation = js["result"];
+        var computation = js["card"];
 
         // Update computation result
         document.addForm.result.value = computation
         }
 
-        function handleClick(e) {
+        function createCard(e) {
             var form = document.addForm;
-            var arg1 = form.arg1.value;
-            var arg2 = form.arg2.value;
+            var eventType = form.eventType.value;
+            var recipient = form.recipient.value;
+            var orientation = form.orientation.value;
+
+            if(!eventType && !recipient && !orientation) {
+                return;
+            }
 
             var data = {};
-            data["arg1"] = arg1;
-            data["arg2"] = arg2;
+            data["eventType"] = eventType;
+            data["recipient"] = recipient;
+            data["orientation"] = orientation;
 
             var js = JSON.stringify(data);
             console.log("JS:" + js);
@@ -55,13 +61,21 @@
     <h1>Card Maker</h1>
 
     <div>
-        
+        <h2>List of Cards</h2> 
+        <div>
+            <ul>
+                <li></li>
+            </ul>
+        </div>
     </div>
 
     <div>
+        <h2>Creat a card</h2>
         <form name="addForm" method="post" name="addValues">
-            <input name="arg1" value="" /><input name="arg2" value="" /><input name="result" readonly/>
-            <input type="button" value="Submit"  onClick="JavaScript:handleClick(this)">
+            <input name="eventType" value="" />
+            <input name="recipient" value=""/>
+            <input name="orientation" value="" />
+            <input type="button" value="Create"  onClick="JavaScript:createCard(this)">
         </form>
     </div>
 </body>
