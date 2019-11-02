@@ -1,5 +1,6 @@
 <html>
 <head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript">
         var add_url = "https://4547fey8hf.execute-api.us-east-1.amazonaws.com/beta/calculator";
 
@@ -54,7 +55,7 @@
                 }
             };
         }
-    /script>
+    </script>
 </head>
 
 <body>
@@ -63,18 +64,29 @@
     <div>
         <h2>List of Cards</h2> 
         <div>
-            <ul>
-                <li></li>
-            </ul>
+            <select id="cardList" size="10">
+            	<option>Please load from Database</option>
+            </select>
+            <br>
+            <button type="button" id="listBtn" name="listBtn">List All Card from Database</button>
+            <br>
+            <button type="button" id="deleteBtn" name="deleteBtn">Delete Selected Card</button>
         </div>
     </div>
 
     <div>
-        <h2>Creat a card</h2>
-        <form name="addForm" method="post" name="addValues">
-            <input name="eventType" value="" />
-            <input name="recipient" value=""/>
-            <input name="orientation" value="" />
+        <h2>Create a card</h2>
+        <form name="createCardForm" method="post" name="createCard">
+            Event Type: <input name="eventType" value="" />
+            <br>
+            Recipient: <input name="recipient" value=""/>
+            <br>
+            Orientation: 
+            <select name="orientation">
+            	<option>Landscape</option>
+            	<option>Portrait</option>
+            </select>
+            <br>
             <input type="button" value="Create"  onClick="JavaScript:createCard(this)">
         </form>
     </div>
