@@ -67,14 +67,14 @@ public class CreateCardHandler implements RequestStreamHandler {
 			JSONParser parser = new JSONParser();
 			JSONObject event = (JSONObject) parser.parse(reader);
 			logger.log("event:" + event.toJSONString());
-
+	        
 			body = ((JSONObject) event.get("body")).toJSONString();
 			if (body == null) {
 				body = event.toJSONString();  // this is only here to make testing easier
 			}
 		} catch (ParseException pe) {
 			logger.log(pe.toString());
-			response = new CreateCardResponse(null, 400);  // unable to process input
+			response = new CreateCardResponse(pe.getMessage(), 400);  // unable to process input
 			responseJson.put("body", new Gson().toJson(response));
 			processed = true;
 			body = null;
@@ -82,17 +82,16 @@ public class CreateCardHandler implements RequestStreamHandler {
 		
 		if (!processed) {
 			CreateCardRequest req = new Gson().fromJson(body, CreateCardRequest.class);
-//			logger.log(req.toString());
 			
 			try {
 				Card card = createCard(req.eventType, req.recipient, req.orientation);
 				if (card != null) {
 					response = new CreateCardResponse(card, 200);
 				} else {
-					response = new CreateCardResponse(null, 400);
+//					response = new CreateCardResponse("", );
 				}
 			} catch (Exception e) {
-//				response = new CreateConstantResponse("Unable to create constant: " + req.name + "(" + e.getMessage() + ")", 400);
+				response = new CreateCardResponse("Unable to create card: " +  e.getMessage() , 400);
 			}
 		}
 
