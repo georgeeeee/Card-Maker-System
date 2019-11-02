@@ -2,6 +2,7 @@ package edu.wpi.cs.justice.cardmaker.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class DatabaseUtil {
 	// These are to be configured and NEVER stored in the code.
@@ -26,13 +27,18 @@ public class DatabaseUtil {
 		if (conn != null) { return conn; }
 		
 		try {
-			//System.out.println("start connecting......");
+			System.out.println("start connecting......");
 			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection(
-					jdbcTag + rdsMySqlDatabaseUrl + ":" + rdsMySqlDatabasePort + "/" + dbName + multiQueries,
-					dbUsername,
-					dbPassword);
-			//System.out.println("Database has been connected successfully.");
+			try {
+				conn = DriverManager.getConnection(
+						jdbcTag + rdsMySqlDatabaseUrl + ":" + rdsMySqlDatabasePort + "/" + dbName + multiQueries,
+						dbUsername,
+						dbPassword);
+			} catch (SQLException ex) {
+                // log an exception. fro example:
+                System.out.println("Failed to create the database connection."); 
+            }
+			System.out.println("Database has been connected successfully.");
 			return conn;
 		} catch (Exception ex) {
 			throw new Exception("Failed in database connection");

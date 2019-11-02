@@ -3,24 +3,17 @@ package edu.wpi.cs.justice.cardmaker.db;
 import java.sql.*;
 import java.util.ArrayList;
 
-import com.amazonaws.services.lambda.runtime.LambdaLogger;
-
 import edu.wpi.cs.justice.cardmaker.model.Card;
 
 
 public class CardDAO {
 	java.sql.Connection conn;
-
-	LambdaLogger logger;
 	
-    public CardDAO() {
-    	if (logger != null) { logger.log("in db creation"); }
-    	
+    public CardDAO() {    	
     	try  {
     		conn = DatabaseUtil.connect();
     	} catch (Exception e) {
     		conn = null;
-    		if (logger != null) { logger.log(e.getMessage()); }
     	}
     }
     
@@ -29,8 +22,9 @@ public class CardDAO {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO cards (card_id, event_type, recipient, orientation) values(?,?,?,?);");
             ps.setString(1,  card.getCardId());
             ps.setString(2,  card.getEventType());
-            ps.setString(2,  card.getRecipient());
-            ps.setString(2,  card.getOrientation());
+            ps.setString(3,  card.getRecipient());
+            ps.setString(4,  card.getOrientation());
+            
             ps.execute();
             return true;
 
