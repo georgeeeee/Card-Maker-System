@@ -13,7 +13,7 @@ public class CreateCardResponse {
 		this.error = "";
 	}
 	
-	public CreateCardResponse (int statusCode, String errorMessage) {
+	public CreateCardResponse (String errorMessage, int statusCode) {
 		this.card = null; // doesn't matter since error
 		this.statusCode = statusCode;
 		this.error = errorMessage;
