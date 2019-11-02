@@ -1,9 +1,9 @@
 package edu.wpi.cs.justice.cardmaker.http;
 
 public class DeleteCardRequest {
-	public final int cardId;
+	public final String cardId;
 	
-	public DeleteCardRequest (int cardId) {
+	public DeleteCardRequest (String cardId) {
 		this.cardId = cardId;
 	}
 
