@@ -93,14 +93,14 @@
             var cardListContainer = document.getElementById('loadCardList');
             var cardId = cardListContainer.options[cardListContainer.selectedIndex].value;
 
-            const delete_url = api_url + "/card/" + cardId;
+            const delete_url = api_url + "/card/" + cardId + "/delete"; 
             var data = {};
             data["cardId"] = cardId;
 
             var data = JSON.stringify(data);
 
             var xhr = new XMLHttpRequest();
-            xhr.open("DELETE", delete_url);
+            xhr.open("POST", delete_url);
             xhr.send(data);
             // This will process results and update HTML as appropriate. 
             xhr.onloadend = function () {
