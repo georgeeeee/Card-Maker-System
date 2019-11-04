@@ -2,7 +2,7 @@
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript">
-        var api_url = " https://nggb2gdfy0.execute-api.us-east-1.amazonaws.com/testapp";
+        var api_url = " https://dg6dxck4bi.execute-api.us-east-1.amazonaws.com/testapp";
 
         const create_url = api_url + "/card";
         const list_url = api_url + "/cards" ;
@@ -11,7 +11,7 @@
 
         function processCreateCardResponse(response) {
             var response = JSON.parse(response);
-            listAllCard();
+            window.location.reload(true);
         }
 
         function showCard(response) {
@@ -106,7 +106,7 @@
             xhr.onloadend = function () {
                 if (xhr.readyState == XMLHttpRequest.DONE) {
                     if (xhr.status == 200) {
-                        listAllCard();
+                        window.location.reload(true)
                     } else if (xhr.status == 400) {
                         alert ("unable to process request");
                     }
@@ -124,12 +124,11 @@
     <div>
         <h2>List of Cards</h2> 
         <div>
-            <select id="loadCardList" size="10">
+            <select id="loadCardList" style="width:400px;height:300px;font-size:20px;" size="10">
             </select>
             <br>
-            <button type="button" id="listBtn" name="listBtn" onClick="JavaScript:listAllCard(this)">List All Card from Database</button>
-            <br>
-            <button type="button" id="deleteBtn" name="deleteBtn" onClick="JavaScript:deleteCard(this)">Delete Selected Card</button>
+            <button type="button" id="listBtn" style="width:196px;font-size:15px;padding:3px;" name="listBtn" onClick="JavaScript:listAllCard(this)">List All Cards</button>
+            <button type="button" id="deleteBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteBtn" onClick="JavaScript:deleteCard(this)">Delete Selected Card</button>
         </div>
     </div>
 
