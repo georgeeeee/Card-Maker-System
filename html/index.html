@@ -1,0 +1,152 @@
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript">
+        var api_url = " https://dg6dxck4bi.execute-api.us-east-1.amazonaws.com/testapp";
+
+        const create_url = api_url + "/card";
+        const list_url = api_url + "/cards" ;
+
+        var cardList = null;
+
+        function processCreateCardResponse(response) {
+            var response = JSON.parse(response);
+            window.location.reload(true);
+        }
+
+        function showCard(response) {
+            var response = JSON.parse(response);
+            var cards = response.cardsList;
+            cardList = cards;
+
+            cardlistContainer = document.getElementById('loadCardList');
+            var length = cardlistContainer.options.length;
+            for (i = 0; i < length; i++) {
+                select.options[i] = null;
+            }
+            for (var i in cards) {
+                var option = document.createElement("option");
+                option.value = cards[i].cardId;
+                option.text = cards[i].recipient + '_' + cards[i].eventType + '_' + cards[i].orientation;
+                cardlistContainer.add(option);
+            }
+        }
+
+        function createCard(e) {
+            var form = document.createCardForm;
+            var eventType = form.eventType.value;
+            var recipient = form.recipient.value;
+            var orientation = form.orientation.value;
+
+            if(!eventType && !recipient && !orientation) {
+                return;
+            }
+
+            var data = {};
+            data["eventType"] = eventType;
+            data["recipient"] = recipient;
+            data["orientation"] = orientation;
+
+            var js = JSON.stringify(data);
+            console.log("JS:" + js);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", create_url, true);
+
+            // send the collected data as JSON
+            xhr.send(js);
+
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                console.log(xhr);
+                console.log(xhr.request);
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                    console.log ("XHR:" + xhr.responseText);
+                    processCreateCardResponse(xhr.responseText);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                    processCreateCardResponse(null);
+                }
+            };
+        }
+
+        function listAllCard() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", list_url);
+            xhr.send();
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        showCard(xhr.responseText);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+        }
+
+        function deleteCard(e) {
+            var cardListContainer = document.getElementById('loadCardList');
+            var cardId = cardListContainer.options[cardListContainer.selectedIndex].value;
+
+            const delete_url = api_url + "/card/" + cardId + "/delete"; 
+            var data = {};
+            data["cardId"] = cardId;
+
+            var data = JSON.stringify(data);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", delete_url);
+            xhr.send(data);
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        window.location.reload(true)
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+        }
+
+    </script>
+</head>
+
+<body onload="listAllCard()">
+    <h1>Card Maker</h1>
+
+    <div>
+        <h2>List of Cards</h2> 
+        <div>
+            <select id="loadCardList" style="width:400px;height:300px;font-size:20px;" size="10">
+            </select>
+            <br>
+            <button type="button" id="listBtn" style="width:196px;font-size:15px;padding:3px;" name="listBtn" onClick="JavaScript:listAllCard(this)">List All Cards</button>
+            <button type="button" id="deleteBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteBtn" onClick="JavaScript:deleteCard(this)">Delete Selected Card</button>
+        </div>
+    </div>
+
+    <div>
+        <h2>Create a card</h2>
+        <form name="createCardForm" method="post" name="createCard">
+            Event Type: <input name="eventType" value="" />
+            <br>
+            Recipient: <input name="recipient" value=""/>
+            <br>
+            Orientation: 
+            <select name="orientation">
+            	<option>Landscape</option>
+            	<option>Portrait</option>
+            </select>
+            <br>
+            <input type="button" value="Create"  onClick="JavaScript:createCard(this)">
+        </form>
+    </div>
+</body>
+</html>
