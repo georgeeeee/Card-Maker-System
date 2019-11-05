@@ -48,7 +48,7 @@ public class DeleteCardHandler implements RequestStreamHandler {
 			JSONObject event = (JSONObject) parser.parse(reader);
 			logger.log("event:" + event.toJSONString());
 
-			body = ((JSONObject) event.get("body")).toJSONString();
+			body = (String)event.get("body");
 			if (body == null) {
 				body = event.toJSONString();  // this is only here to make testing easier
 			}
@@ -74,7 +74,7 @@ public class DeleteCardHandler implements RequestStreamHandler {
 				if (dao.deleteCard(cardId)) {
 					response = new DeleteCardResponse(200);
 				} else {
-					response = new DeleteCardResponse(400, "Unable to delete constant.");
+					response = new DeleteCardResponse(400, "Unable to delete card.");
 				}
 			} catch (Exception e) {
 				response = new DeleteCardResponse(403, e.getMessage());
@@ -82,6 +82,7 @@ public class DeleteCardHandler implements RequestStreamHandler {
 			
 		}
 		// compute proper response
+		
         responseJson.put("body", new Gson().toJson(response));  
         responseJson.put("statusCode", response.statusCode);
         
