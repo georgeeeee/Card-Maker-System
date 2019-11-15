@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 import edu.wpi.cs.justice.cardmaker.model.Card;
+import edu.wpi.cs.justice.cardmaker.model.Page;
 
 
 public class CardDAO {
@@ -30,6 +31,21 @@ public class CardDAO {
 
         } catch (Exception e) {
             throw new Exception("Failed to add card: " + e.getMessage());
+        }
+    }
+    
+    public boolean addPage(Page page) throws Exception {
+    	try {
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO pages () values(?,?,?);");
+            ps.setString(1,  page.getPageId());
+            ps.setString(2,  page.getCardId());
+            ps.setString(3,  page.getPageName());
+            
+            ps.execute();
+            return true;
+
+        } catch (Exception e) {
+            throw new Exception("Failed to add page: " + e.getMessage());
         }
     }
 

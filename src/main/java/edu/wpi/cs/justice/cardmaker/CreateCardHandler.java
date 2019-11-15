@@ -21,6 +21,8 @@ import edu.wpi.cs.justice.cardmaker.db.CardDAO;
 import edu.wpi.cs.justice.cardmaker.http.CreateCardRequest;
 import edu.wpi.cs.justice.cardmaker.http.CreateCardResponse;
 import edu.wpi.cs.justice.cardmaker.model.Card;
+import edu.wpi.cs.justice.cardmaker.model.Page;
+import util.Util;
 
 /**
  * Create a new card.
@@ -34,10 +36,16 @@ public class CreateCardHandler implements RequestStreamHandler {
 		if (logger != null) { logger.log("in createCard"); }
 		CardDAO dao = new CardDAO();
 		
-		final String cardId = UUID.randomUUID().toString().replace("-", "");
+		final String cardId = Util.generateUniqueId();
 		Card card = new Card (cardId, eventType, recipient, orientation);
 		
 		if (dao.addCard(card)) {
+			for(int i=0; i<3; i++) {
+				String pageId = Util.generateUniqueId();
+				Page page = new Page(pageId, card.getCardId(), Util.pageNames[i]);
+				dao.addPage(page);
+			}
+			
 			return card;
 		}
 		
