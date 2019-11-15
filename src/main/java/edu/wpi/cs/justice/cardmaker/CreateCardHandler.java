@@ -40,7 +40,7 @@ public class CreateCardHandler implements RequestStreamHandler {
 		Card card = new Card (cardId, eventType, recipient, orientation);
 		
 		if (dao.addCard(card)) {
-			addPageRequest();
+			addPageRequest(card);
 			return card;
 		}
 		
