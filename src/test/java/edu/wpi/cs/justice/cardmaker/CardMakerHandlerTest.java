@@ -19,7 +19,7 @@ public class CardMakerHandlerTest {
 
     @Test
     public void testCardMakerHandler() throws IOException {
-        CardMakerHandler handler = new CardMakerHandler();
+       CreateCardHandler handler = new CreateCardHandler();
 
         InputStream input = new ByteArrayInputStream(SAMPLE_INPUT_STRING.getBytes());;
         OutputStream output = new ByteArrayOutputStream();
