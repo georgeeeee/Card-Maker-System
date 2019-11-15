@@ -1,20 +1,24 @@
+package edu.wpi.cs.justice.cardmaker;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.text.ParseException;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.TextDAO;
 import edu.wpi.cs.justice.cardmaker.http.AddTextRequest;
 import edu.wpi.cs.justice.cardmaker.http.AddTextResponse;
-import edu.wpi.cs.justice.cardmaker.http.CreateCardRequest;
-import edu.wpi.cs.justice.cardmaker.http.CreateCardResponse;
 import edu.wpi.cs.justice.cardmaker.model.Text;
 import util.Util;
 

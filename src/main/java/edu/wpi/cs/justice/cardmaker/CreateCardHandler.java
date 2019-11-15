@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.UUID;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -49,7 +48,7 @@ public class CreateCardHandler implements RequestStreamHandler {
 
 	public void addPageRequest(Card card) throws Exception{
 		CardDAO dao = new CardDAO();
-		for(int i= 0;i<3;i++){
+		for(int i= 0; i<3; i++){
 				String pageId = Util.generateUniqueId();
 				Page page = new Page(pageId, card.getCardId(), Util.pageNames[i]);
 				dao.addPage(page);
