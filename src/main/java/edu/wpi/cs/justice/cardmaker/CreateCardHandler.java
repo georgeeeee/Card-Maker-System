@@ -40,16 +40,20 @@ public class CreateCardHandler implements RequestStreamHandler {
 		Card card = new Card (cardId, eventType, recipient, orientation);
 		
 		if (dao.addCard(card)) {
-			for(int i=0; i<3; i++) {
-				String pageId = Util.generateUniqueId();
-				Page page = new Page(pageId, card.getCardId(), Util.pageNames[i]);
-				dao.addPage(page);
-			}
-			
+			addPageRequest();
 			return card;
 		}
 		
 		return card;
+	}
+
+	public void addPageRequest(Card card) throws Exception{
+		CardDAO dao = new CardDAO();
+		for(int i= 0;i<3;i++){
+				String pageId = Util.generateUniqueId();
+				Page page = new Page(pageId, card.getCardId(), Util.pageNames[i]);
+				dao.addPage(page);
+		}
 	}
 	
     @Override
