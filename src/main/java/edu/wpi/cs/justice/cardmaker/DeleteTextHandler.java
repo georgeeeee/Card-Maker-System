@@ -7,12 +7,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.TextDAO;
-import edu.wpi.cs.justice.cardmaker.http.DeleteCardRequest;
 import edu.wpi.cs.justice.cardmaker.http.DeleteCardResponse;
 import edu.wpi.cs.justice.cardmaker.http.DeleteTextRequest;
 
