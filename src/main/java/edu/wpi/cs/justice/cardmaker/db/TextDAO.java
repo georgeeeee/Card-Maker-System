@@ -50,4 +50,19 @@ public class TextDAO {
         }
 	}
 
+	public boolean deleteText(String elementId, String pageId) throws Exception {
+        try {
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM pageElements WHERE element_id = ? AND page_id = ?;");
+            ps.setString(1, elementId);
+            ps.setString(2, pageId);
+            int numAffected = ps.executeUpdate();
+            ps.close();
+            
+            return (numAffected == 1);
+
+        } catch (Exception e) {
+            throw new Exception("Failed to delete: " + e.getMessage());
+        }
+	}
+
 }
