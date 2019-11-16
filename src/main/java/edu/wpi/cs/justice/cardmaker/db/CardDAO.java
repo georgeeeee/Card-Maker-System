@@ -98,11 +98,13 @@ public class CardDAO {
             ps.setString(1, cardId);
             ps.execute();
             ResultSet resultSet= ps.getResultSet();
-            Card c = generateCard(resultSet);
+            if(resultSet.next()){
+                Card c = generateCard(resultSet);
             resultSet.close();
             ps.close();
             return c;
-
+            }
+        return null;
         } catch (Exception e) {
             throw new Exception("Failed to show card: " + e.getMessage());
         }
