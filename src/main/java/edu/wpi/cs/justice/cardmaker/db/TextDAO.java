@@ -1,6 +1,7 @@
 package edu.wpi.cs.justice.cardmaker.db;
 
 import java.sql.PreparedStatement;
+import java.util.List;
 
 import edu.wpi.cs.justice.cardmaker.model.Text;
 
@@ -50,4 +51,7 @@ public class TextDAO {
         }
 	}
 
+	public List<Text> getTexts(String pageId){
+		return null;
+	}
 }

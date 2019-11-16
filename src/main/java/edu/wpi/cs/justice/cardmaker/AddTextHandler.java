@@ -1,3 +1,5 @@
+package edu.wpi.cs.justice.cardmaker;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,9 +8,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
+import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.TextDAO;
 import edu.wpi.cs.justice.cardmaker.http.AddTextRequest;
@@ -62,7 +68,7 @@ public class AddTextHandler implements RequestStreamHandler {
 			if (body == null) {
 				body = event.toJSONString();  // this is only here to make testing easier
 			}
-		} catch (ParseException pe) {
+		} catch (org.json.simple.parser.ParseException pe) {
 			logger.log(pe.toString());
 			response = new AddTextResponse(pe.getMessage(), 400);  // unable to process input
 			responseJson.put("body", new Gson().toJson(response));

@@ -5,23 +5,17 @@ import java.util.List;
 import edu.wpi.cs.justice.cardmaker.model.Card;
 import edu.wpi.cs.justice.cardmaker.model.Image;
 import edu.wpi.cs.justice.cardmaker.model.Page;
+import edu.wpi.cs.justice.cardmaker.model.Text;
 
 public class ShowCardResponse {
 	private Card card;
-	private List<Page> pages;
-	private List<Text> texts;
-	private List<Image> images;
-	private final int statusCode;
-	private final String errorMessage;
+	public final int statusCode;
+	public final String errorMessage;
 	
-	public ShowCardResponse(Card card, List<Page> pages, List<Text> texts, List<Image> images, int statusCode) {
-		super();
-		this.card = card;
-		this.pages = pages;
-		this.texts = texts;
-		this.images = images;
-		this.statusCode = statusCode;
+	public ShowCardResponse(Card card, int statusCode) {
 		this.errorMessage = "";
+		this.statusCode = statusCode;
+		this.card = card;
 	}
 
 	public ShowCardResponse(String errorMessage, int statusCode) {

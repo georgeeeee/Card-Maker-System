@@ -2,6 +2,7 @@ package edu.wpi.cs.justice.cardmaker.db;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.wpi.cs.justice.cardmaker.model.Card;
 import edu.wpi.cs.justice.cardmaker.model.Page;
@@ -63,8 +64,49 @@ public class CardDAO {
         }
     }
     
+    public List<Page> getPage(String cardId) throws Exception {
+    	String query = "SELECT * FROM pages WHERE card_id = ?";
+    	try {
+    		PreparedStatement ps = conn.prepareStatement(query);
+    		ps.setString(1, cardId);
+    		ResultSet resultSet = ps.executeQuery();
+    		
+    		List<Page> pages = new ArrayList<Page>();
+    		while (resultSet.next()) {
+    			String pageId  = resultSet.getString("page_id");
+                String name  = resultSet.getString("name");
+                pages.add(new Page(cardId, pageId, name));
+            }
+    		
+    		resultSet.close();
+            ps.close();	
+            return pages;
+    	} catch(Exception e) {
+    		throw new Exception("Failed to get pages: " + e.getMessage());
+    	}
+    }
+    
+    public Card getCard(String cardId) throws Exception {
+    	String query = "SELECT * FROM cards WHERE card_id = ?";
+    	try {
+    		PreparedStatement ps = conn.prepareStatement(query);
+    		ps.setString(1, cardId);
+    		ResultSet resultSet = ps.executeQuery();
+    		
+    		resultSet.next();
+    		String eventType  = resultSet.getString("event_type");
+            String recipient  = resultSet.getString("recipient");
+            String orientation  = resultSet.getString("orientation");
+            
+            resultSet.close();
+            ps.close();
+            return new Card(cardId, eventType, recipient, orientation);
+    	} catch(Exception e) {
+    		throw new Exception("Failed to get card: " + e.getMessage());
+    	}
+    }
+    
     public ArrayList<Card> getAllCards() throws Exception {
-        
         ArrayList<Card> cards = new ArrayList<Card>();
         try {
             Statement statement = conn.createStatement();
