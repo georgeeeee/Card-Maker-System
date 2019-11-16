@@ -9,7 +9,7 @@ public class Text{
     String locationX;
     String locationY;
 
-    public Text(String elementId,String text,String fontName,String fontSize,String fontType,String locationX,String locationY){
+    public Text(String elementId, String text, String fontName, String fontSize, String fontType, String locationX, String locationY){
         this.elementId = elementId;
         this.text = text;
         this.fontName = fontName;

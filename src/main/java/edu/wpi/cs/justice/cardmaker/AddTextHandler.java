@@ -25,14 +25,14 @@ import util.Util;
 public class AddTextHandler implements RequestStreamHandler {
     LambdaLogger logger;
 
-    Text AddText(String textString,String fontName,String fontSize,String locationX,String locationY,String pageId,String fontType)throws Exception{
+    Text AddText(String textString, String fontName, String fontSize, String locationX, String locationY, String pageId, String fontType)throws Exception{
 		if (logger != null) { logger.log("in addText"); }
         TextDAO dao = new TextDAO();
         
         final String elementId = Util.generateUniqueId();
-        Text text = new Text (elementId,textString ,fontName, fontSize,fontType);
+        Text text = new Text(elementId, textString, fontName, fontSize, fontType, locationX, locationY);
         if(dao.addText(text)){
-            if(dao.addPageElement(text,locationX,locationY,pageId)){
+            if(dao.addPageElement(text,locationX, locationY, pageId)){
                 return text;
             } 
         }

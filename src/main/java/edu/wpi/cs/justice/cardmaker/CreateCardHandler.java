@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -39,7 +41,6 @@ public class CreateCardHandler implements RequestStreamHandler {
 		Card card = new Card (cardId, eventType, recipient, orientation);
 		
 		if (dao.addCard(card)) {
-			addPageRequest(card);
 			return card;
 		}
 		
@@ -48,11 +49,13 @@ public class CreateCardHandler implements RequestStreamHandler {
 
 	public void addPageRequest(Card card) throws Exception{
 		CardDAO dao = new CardDAO();
-		for(int i= 0; i<3; i++){
-				String pageId = Util.generateUniqueId();
-				Page page = new Page(pageId, card.getCardId(), Util.pageNames[i]);
-				dao.addPage(page);
+		ArrayList<Page> pages = new ArrayList<Page>();
+		
+		for(String pageName: Util.pageNames){
+				pages.add(new Page(card.getCardId(), Util.generateUniqueId(), pageName));
 		}
+		
+		dao.addPages(pages);
 	}
 	
     @Override
@@ -97,6 +100,7 @@ public class CreateCardHandler implements RequestStreamHandler {
 			try {
 				Card card = createCard(req.eventType, req.recipient, req.orientation);
 				if (card != null) {
+					addPageRequest(card);
 					response = new CreateCardResponse(card, 200);
 				} else {
 //					response = new CreateCardResponse("", );

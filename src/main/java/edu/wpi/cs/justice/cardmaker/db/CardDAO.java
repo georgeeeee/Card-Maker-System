@@ -35,15 +35,22 @@ public class CardDAO {
             throw new Exception("Failed to add card: " + e.getMessage());
         }
     }
-
-    public boolean addPage(Page page) throws Exception {
-        try {
+    
+    public boolean addPages(ArrayList<Page> pages) throws Exception {
+    	try {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO pages () values(?,?,?);");
-            ps.setString(1, page.getPageId());
-            ps.setString(2, page.getCardId());
-            ps.setString(3, page.getPageName());
+            
+            for (Page page : pages) {
+            	ps.clearParameters();
+            	ps.setString(1,  page.getPageId());
+                ps.setString(2,  page.getCardId());
+                ps.setString(3,  page.getPageName());
 
-            ps.execute();
+                ps.addBatch();
+            }
+            
+            ps.executeBatch();
+
             return true;
 
         } catch (Exception e) {
