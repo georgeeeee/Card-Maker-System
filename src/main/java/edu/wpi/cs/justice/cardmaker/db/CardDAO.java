@@ -92,4 +92,20 @@ public class CardDAO {
         return new Card (cardId, eventType, recipient, orientation);
     }
 
+	public Card getCard(String cardId) throws Exception{
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM cards WHERE card_id = ?");
+            ps.setString(1, cardId);
+            ps.execute();
+            ResultSet resultSet= ps.getResultSet();
+            Card c = generateCard(resultSet);
+            resultSet.close();
+            ps.close();
+            return c;
+
+        } catch (Exception e) {
+            throw new Exception("Failed to show card: " + e.getMessage());
+        }
+	}
+
 }
