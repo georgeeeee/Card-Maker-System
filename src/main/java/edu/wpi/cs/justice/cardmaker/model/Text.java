@@ -6,13 +6,17 @@ public class Text{
     String fontName;
     String fontSize;
     String fontType;
+    String locationX;
+    String locationY;
 
-    public Text(String elementId,String text,String fontName,String fontSize,String fontType){
+    public Text(String elementId,String text,String fontName,String fontSize,String fontType,String locationX,String locationY){
         this.elementId = elementId;
         this.text = text;
         this.fontName = fontName;
         this.fontSize = fontSize;
         this.fontType = fontType;
+        this.locationX = locationX;
+        this.locationY = locationY;
     }
     public String getFontType() {
         return this.fontType;
@@ -40,5 +44,20 @@ public class Text{
     }
 	public String getElementId() {
 		return this.elementId;
-	}
+    }
+    public String getLocationX() {
+        return this.locationX;
+    }
+
+    public void setLocationX(String locationX) {
+        this.locationX = locationX;
+    }
+
+    public String getLocationY() {
+        return this.locationY;
+    }
+
+    public void setLocationY(String locationY) {
+        this.locationY = locationY;
+    }
 }
