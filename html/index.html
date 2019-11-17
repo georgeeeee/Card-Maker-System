@@ -2,22 +2,38 @@
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript">
-        var add_url = "https://4547fey8hf.execute-api.us-east-1.amazonaws.com/beta/calculator";
+        var api_url = " https://nggb2gdfy0.execute-api.us-east-1.amazonaws.com/testapp";
 
-        function processResponse(card) {
-        // Can grab any DIV or SPAN HTML element and can then manipulate its
-        // contents dynamically via javascript
-        console.log("card: " + card);
-        var js = JSON.parse(card);
+        const create_url = api_url + "/card";
+        const list_url = api_url + "/cards" ;
 
-        var computation = js["card"];
+        var cardList = null;
 
-        // Update computation result
-        document.addForm.result.value = computation
+        function processCreateCardResponse(response) {
+            var response = JSON.parse(response);
+            listAllCard();
+        }
+
+        function showCard(response) {
+            var response = JSON.parse(response);
+            var cards = response.cardsList;
+            cardList = cards;
+
+            cardlistContainer = document.getElementById('loadCardList');
+            var length = cardlistContainer.options.length;
+            for (i = 0; i < length; i++) {
+                select.options[i] = null;
+            }
+            for (var i in cards) {
+                var option = document.createElement("option");
+                option.value = cards[i].cardId;
+                option.text = cards[i].recipient + '_' + cards[i].eventType + '_' + cards[i].orientation;
+                cardlistContainer.add(option);
+            }
         }
 
         function createCard(e) {
-            var form = document.addForm;
+            var form = document.createCardForm;
             var eventType = form.eventType.value;
             var recipient = form.recipient.value;
             var orientation = form.orientation.value;
@@ -34,7 +50,7 @@
             var js = JSON.stringify(data);
             console.log("JS:" + js);
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", add_url, true);
+            xhr.open("POST", create_url, true);
 
             // send the collected data as JSON
             xhr.send(js);
@@ -46,31 +62,74 @@
                 if (xhr.readyState == XMLHttpRequest.DONE) {
                     if (xhr.status == 200) {
                     console.log ("XHR:" + xhr.responseText);
-                    processResponse(arg1, arg2, xhr.responseText);
+                    processCreateCardResponse(xhr.responseText);
                     } else if (xhr.status == 400) {
                         alert ("unable to process request");
                     }
                 } else {
-                processResponse(arg1, arg2, "N/A");
+                    processCreateCardResponse(null);
                 }
             };
         }
+
+        function listAllCard() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", list_url);
+            xhr.send();
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        showCard(xhr.responseText);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+        }
+
+        function deleteCard(e) {
+            var cardListContainer = document.getElementById('loadCardList');
+            var cardId = cardListContainer.options[cardListContainer.selectedIndex].value;
+
+            const delete_url = api_url + "/card/" + cardId + "/delete"; 
+            var data = {};
+            data["cardId"] = cardId;
+
+            var data = JSON.stringify(data);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", delete_url);
+            xhr.send(data);
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        listAllCard();
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+        }
+
     </script>
 </head>
 
-<body>
+<body onload="listAllCard()">
     <h1>Card Maker</h1>
 
     <div>
         <h2>List of Cards</h2> 
         <div>
-            <select id="cardList" size="10">
-            	<option>Please load from Database</option>
+            <select id="loadCardList" size="10">
             </select>
             <br>
-            <button type="button" id="listBtn" name="listBtn">List All Card from Database</button>
+            <button type="button" id="listBtn" name="listBtn" onClick="JavaScript:listAllCard(this)">List All Card from Database</button>
             <br>
-            <button type="button" id="deleteBtn" name="deleteBtn">Delete Selected Card</button>
+            <button type="button" id="deleteBtn" name="deleteBtn" onClick="JavaScript:deleteCard(this)">Delete Selected Card</button>
         </div>
     </div>
 
