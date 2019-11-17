@@ -131,12 +131,11 @@ public class CardDAO {
         try {
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM cards WHERE card_id = ?");
             ps.setString(1, cardId);
-            ps.execute();
+            ps.addBatch();
             ResultSet resultSet = ps.getResultSet();
             if (resultSet.next()) {
                 Card c = generateCard(resultSet);
                 resultSet.close();
-                ps.close();
 
                 PreparedStatement ps2 = conn.prepareStatement("SELECT * FROM pages WHERE card_id = ?");
                 ps2.setString(1, cardId);
@@ -164,6 +163,7 @@ public class CardDAO {
                 }
                 pageSet.close();
                 ps2.close();
+                ps.close();
                 return c;
             }
             return null;
