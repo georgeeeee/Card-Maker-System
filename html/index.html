@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    <div>
+    <div id="createCard">
         <h2>Create a card</h2>
         <form name="createCardForm" method="post" name="createCard">
             Event Type: <input name="eventType" value="" />
@@ -89,6 +89,23 @@
             <br>
             <input type="button" value="Create"  onClick="JavaScript:createCard(this)">
         </form>
+    </div>
+    <div id="viewPage">
+        <div id="selectPage">
+            <h2>Select the Page to view/edit</h2>
+            <button>Front</button> <button>Inner Left</button> <button>Inner Right</button> <button>Back</button>
+        </div>
+        <div id="viewPage">
+            Element(s) in Page:
+            <br>
+            <select id="elementList" size="10">
+                <option>Please load from Database</option>
+            </select>
+            <br>
+            <button type="button" id="addElemBtn" name="addElemBtn">Add New Element</button>
+            <br>
+            <button type="button" id="deleteElemBtn" name="deleteElemBtn">Delete Selected Element</button>
+        </div>
     </div>
 </body>
 </html>
