@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.json.simple.JSONObject;
@@ -21,6 +22,8 @@ import edu.wpi.cs.justice.cardmaker.db.CardDAO;
 import edu.wpi.cs.justice.cardmaker.http.CreateCardRequest;
 import edu.wpi.cs.justice.cardmaker.http.CreateCardResponse;
 import edu.wpi.cs.justice.cardmaker.model.Card;
+import edu.wpi.cs.justice.cardmaker.model.Page;
+import util.Util;
 
 /**
  * Create a new card.
@@ -34,7 +37,7 @@ public class CreateCardHandler implements RequestStreamHandler {
 		if (logger != null) { logger.log("in createCard"); }
 		CardDAO dao = new CardDAO();
 		
-		final String cardId = UUID.randomUUID().toString().replace("-", "");
+		final String cardId = Util.generateUniqueId();
 		Card card = new Card (cardId, eventType, recipient, orientation);
 		
 		if (dao.addCard(card)) {
@@ -42,6 +45,17 @@ public class CreateCardHandler implements RequestStreamHandler {
 		}
 		
 		return card;
+	}
+
+	public void addPageRequest(Card card) throws Exception{
+		CardDAO dao = new CardDAO();
+		ArrayList<Page> pages = new ArrayList<Page>();
+		
+		for(String pageName: Util.pageNames){
+				pages.add(new Page(card.getCardId(), Util.generateUniqueId(), pageName));
+		}
+		
+		dao.addPages(pages);
 	}
 	
     @Override
@@ -86,6 +100,7 @@ public class CreateCardHandler implements RequestStreamHandler {
 			try {
 				Card card = createCard(req.eventType, req.recipient, req.orientation);
 				if (card != null) {
+					addPageRequest(card);
 					response = new CreateCardResponse(card, 200);
 				} else {
 //					response = new CreateCardResponse("", );
