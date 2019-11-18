@@ -8,10 +8,9 @@ public class ShowCardResponse {
 	public final String errorMessage;
 	
 	public ShowCardResponse(Card card,int statusCode) {
-		super();
-		this.card = card;
-		this.statusCode = statusCode;
 		this.errorMessage = "";
+		this.statusCode = statusCode;
+		this.card = card;
 	}
 
 	public ShowCardResponse(String errorMessage, int statusCode) {

@@ -6,6 +6,7 @@ public class Page {
 	final String cardId;
 	final String pageId;
 	String name;
+
 	public ArrayList<Text> texts;
 	public ArrayList<Image> images;
 
@@ -14,6 +15,8 @@ public class Page {
 		this.cardId = cardId;
 		this.pageId = pageId;
 		this.name = name;
+		this.texts = null;
+		this.images = null;
 	}
 
 	public String getCardId() {
@@ -31,17 +34,29 @@ public class Page {
 	public void setPageName(String name) {
 		this.name = name;
 	}
+	
 	public ArrayList<Text> getTexts() {
 		return this.texts;
 	}
+	
 	public void setTexts(ArrayList<Text> texts) {
 		this.texts = texts;
 	}
+	
 	public ArrayList<Image> getImages() {
 		return this.images;
 	}
+	
 	public void setImages(ArrayList<Image> images) {
 		this.images = images;
 	}	
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 }

@@ -3,13 +3,12 @@ package edu.wpi.cs.justice.cardmaker.model;
 import java.util.ArrayList;
 
 public class Card {
-
 	final String cardId;
 	String eventType;
 	String recipient;
 	String orientation;
-	public ArrayList<Page> pages;
-
+	ArrayList<Page> pages;
+	
 	public Card(String cardId, String eventType, String recipient, String orientation) {
 		this.cardId = cardId;
 		this.eventType = eventType;
@@ -45,6 +44,7 @@ public class Card {
 	public String getCardId() {
 		return cardId;
 	}
+
 	public ArrayList<Page> getPages() {
 		return this.pages;
 	}

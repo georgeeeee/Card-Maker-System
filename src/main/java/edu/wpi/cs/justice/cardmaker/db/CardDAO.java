@@ -71,9 +71,50 @@ public class CardDAO {
             throw new Exception("Failed to delete: " + e.getMessage());
         }
     }
-
+    
+    public ArrayList<Page> getPage(String cardId) throws Exception {
+    	String query = "SELECT * FROM pages WHERE card_id = ?";
+    	try {
+    		PreparedStatement ps = conn.prepareStatement(query);
+    		ps.setString(1, cardId);
+    		ResultSet resultSet = ps.executeQuery();
+    		
+    		ArrayList<Page> pages = new ArrayList<Page>();
+    		while (resultSet.next()) {
+    			String pageId  = resultSet.getString("page_id");
+                String name  = resultSet.getString("name");
+                pages.add(new Page(cardId, pageId, name));
+            }
+    		
+    		resultSet.close();
+            ps.close();	
+            return pages;
+    	} catch(Exception e) {
+    		throw new Exception("Failed to get pages: " + e.getMessage());
+    	}
+    }
+    
+    public Card getCard(String cardId) throws Exception {
+    	String query = "SELECT * FROM cards WHERE card_id = ?";
+    	try {
+    		PreparedStatement ps = conn.prepareStatement(query);
+    		ps.setString(1, cardId);
+    		ResultSet resultSet = ps.executeQuery();
+    		
+    		resultSet.next();
+    		String eventType  = resultSet.getString("event_type");
+            String recipient  = resultSet.getString("recipient");
+            String orientation  = resultSet.getString("orientation");
+            
+            resultSet.close();
+            ps.close();
+            return new Card(cardId, eventType, recipient, orientation);
+    	} catch(Exception e) {
+    		throw new Exception("Failed to get card: " + e.getMessage());
+    	}
+    }
+    
     public ArrayList<Card> getAllCards() throws Exception {
-
         ArrayList<Card> cards = new ArrayList<Card>();
         try {
             Statement statement = conn.createStatement();
@@ -126,49 +167,5 @@ public class CardDAO {
         String locationX = elementSet.getString("location_X");
         String locationY = elementSet.getString("location_Y");
         return new Text(elementId,text,fontName,fontSize,fontType,locationX,locationY);
-    }
-    public Card getCard(String cardId) throws Exception {
-        try {
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM cards WHERE card_id = ?");
-            ps.setString(1, cardId);
-            ps.addBatch();
-            ResultSet resultSet = ps.getResultSet();
-            if (resultSet.next()) {
-                Card c = generateCard(resultSet);
-                resultSet.close();
-
-                PreparedStatement ps2 = conn.prepareStatement("SELECT * FROM pages WHERE card_id = ?");
-                ps2.setString(1, cardId);
-                ps2.execute();
-                ResultSet pageSet = ps.getResultSet();
-                while (pageSet.next()) {
-                    Page page = generatePage(pageSet);
-                    PreparedStatement ps3 = conn.prepareStatement(
-                            "SELECT * FROM pageElement p,elements e WHERE page_id = ? AND p.element_id = e.element_id");
-                    ps3.setString(1, page.getPageId());
-                    ps3.execute();
-                    ResultSet elementSet = ps3.getResultSet();
-                    while (elementSet.next()) {
-                        if (elementSet.getString("type") == "text") {
-                            page.texts.add(generateText(elementSet));
-                        }
-                        else if(elementSet.getString("type") == "image"){
-                            page.images.add(generateImage(elementSet));
-                        }
-                        
-                    }
-                    elementSet.close();
-                    ps3.close();
-                    c.pages.add(page);
-                }
-                pageSet.close();
-                ps2.close();
-                ps.close();
-                return c;
-            }
-            return null;
-        } catch (Exception e) {
-            throw new Exception("Failed to show card: " + e.getMessage());
-        }
     }
 }
