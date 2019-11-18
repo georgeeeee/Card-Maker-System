@@ -35,20 +35,20 @@ public class CardDAO {
             throw new Exception("Failed to add card: " + e.getMessage());
         }
     }
-    
+
     public boolean addPages(ArrayList<Page> pages) throws Exception {
-    	try {
+        try {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO pages () values(?,?,?);");
-            
+
             for (Page page : pages) {
-            	ps.clearParameters();
-            	ps.setString(1,  page.getPageId());
-                ps.setString(2,  page.getCardId());
-                ps.setString(3,  page.getPageName());
+                ps.clearParameters();
+                ps.setString(1, page.getPageId());
+                ps.setString(2, page.getCardId());
+                ps.setString(3, page.getPageName());
 
                 ps.addBatch();
             }
-            
+
             ps.executeBatch();
 
             return true;
@@ -117,6 +117,7 @@ public class CardDAO {
         String locationX = elementSet.getString("location_X");
         return new Image(elementId, imageUrl, locationX, locationY, width, height);
     }
+
     private Text generateText(ResultSet elementSet) throws SQLException {
         String elementId = elementSet.getString("element_id");
         String text = elementSet.getString("text");
@@ -125,43 +126,51 @@ public class CardDAO {
         String fontSize = elementSet.getString("font_size");
         String locationX = elementSet.getString("location_X");
         String locationY = elementSet.getString("location_Y");
-        return new Text(elementId,text,fontName,fontSize,fontType,locationX,locationY);
+        return new Text(elementId, text, fontName, fontSize, fontType, locationX, locationY);
     }
+
     public Card getCard(String cardId) throws Exception {
         try {
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM cards WHERE card_id = ?");
             ps.setString(1, cardId);
-            ps.addBatch();
+            ps.execute();
             ResultSet resultSet = ps.getResultSet();
             if (resultSet.next()) {
                 Card c = generateCard(resultSet);
-                resultSet.close();
 
                 PreparedStatement ps2 = conn.prepareStatement("SELECT * FROM pages WHERE card_id = ?");
                 ps2.setString(1, cardId);
                 ps2.execute();
                 ResultSet pageSet = ps.getResultSet();
+                PreparedStatement ps3 = conn.prepareStatement(
+                        "SELECT * FROM pageElement p,elements e WHERE page_id = ? AND p.element_id = e.element_id");
                 while (pageSet.next()) {
                     Page page = generatePage(pageSet);
-                    PreparedStatement ps3 = conn.prepareStatement(
-                            "SELECT * FROM pageElement p,elements e WHERE page_id = ? AND p.element_id = e.element_id");
                     ps3.setString(1, page.getPageId());
-                    ps3.execute();
-                    ResultSet elementSet = ps3.getResultSet();
-                    while (elementSet.next()) {
-                        if (elementSet.getString("type") == "text") {
-                            page.texts.add(generateText(elementSet));
-                        }
-                        else if(elementSet.getString("type") == "image"){
-                            page.images.add(generateImage(elementSet));
-                        }
-                        
-                    }
-                    elementSet.close();
-                    ps3.close();
+                    ps3.addBatch();
+                    ps.clearParameters();
                     c.pages.add(page);
                 }
-                pageSet.close();
+                ps3.executeBatch();
+
+                ResultSet elementSet = ps3.getResultSet();
+                while (elementSet.next()) {
+                    for(int i=0;i<c.pages.size();i++) {
+                        try {
+                            if (c.pages.get(i).getPageId() == elementSet.getString("pageId")) {
+                                if (elementSet.getString("type") == "text") {
+                                    c.pages.get(i).texts.add(generateText(elementSet));
+                                } else if (elementSet.getString("type") == "image") {
+                                    c.pages.get(i).images.add(generateImage(elementSet));
+                                }
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        });            
+                    }
+                    
+                ps3.close();
                 ps2.close();
                 ps.close();
                 return c;
