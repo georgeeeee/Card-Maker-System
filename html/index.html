@@ -2,6 +2,10 @@
 <style>
 body {font-family: Arial;}
 
+.hide {
+    display: none;
+}
+
 /* Style the tab */
 .tab {
   overflow: hidden;
@@ -42,7 +46,7 @@ body {font-family: Arial;}
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript">
-        var api_url = " https://dg6dxck4bi.execute-api.us-east-1.amazonaws.com/testapp";
+        var api_url = "https://7r137dq2d5.execute-api.us-east-1.amazonaws.com/testApp2";
 
         const create_url = api_url + "/card";
         const list_url = api_url + "/cards" ;
@@ -62,7 +66,7 @@ body {font-family: Arial;}
             cardlistContainer = document.getElementById('loadCardList');
             var length = cardlistContainer.options.length;
             for (i = 0; i < length; i++) {
-                select.options[i] = null;
+                cardlistContainer.options[i] = null;
             }
             for (var i in cards) {
                 var option = document.createElement("option");
@@ -155,18 +159,67 @@ body {font-family: Arial;}
             };
         }
 
-        function viewCard(e) {
+        var pages = null;
 
+        function showPage(response) {
+            var response = JSON.parse(response);
+            pages = response.card.pages;
+
+            var cardViewContainer = document.getElementById("CardViewContainer");
+            cardViewContainer.style.display = 'block';
+
+            document.getElementById('front').click();
+        }
+
+        function loadElements(page) {
+            elementlistContainer = document.getElementById('elementList');
+            var length = elementlistContainer.options.length;
+            for (i = 0; i < length; i++) {
+                elementlistContainer.options[i] = null;
+            }
+
+            var texts = page.texts;
+            for (var i in texts) {
+                var option = document.createElement("option");
+                option.value = texts[i].elementId;
+                option.text = texts[i].text + '_' + texts[i].fontName + '_' + texts[i].fontType;
+                elementlistContainer.add(option);
+            }
+        }
+
+        function viewCard(e) {
+            var cardListContainer = document.getElementById('loadCardList');
+            var cardId = cardListContainer.options[cardListContainer.selectedIndex].value;
+
+            const view_card_url = api_url + '/card/' + cardId + '/pages';
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", view_card_url);
+            xhr.send();
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        showPage(xhr.responseText);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
         }
 
         function loadPage(evt, pageName) {
+            var page = pages.find(x => x.name === pageName);
             var i, tabcontent, tablinks;
-            document.getElementById("pageName").innerHTML = pageName;
+            //document.getElementById("pageName").innerHTML = pageName;
             tablinks = document.getElementsByClassName("tablinks");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
             evt.currentTarget.className += " active";
+
+            loadElements(page);
         }
 
     </script>
@@ -205,19 +258,14 @@ body {font-family: Arial;}
         </div>
     </div>
 
-    <div style="position: absolute; right: 10%;">
-        <div id="selectPage">
-            <h2>Select the Page to view/edit</h2>
-        </div>
+    <div id="CardViewContainer" class="hide" style="position: absolute; right: 10%;">
         <div class="tab">
-            <button class="tablinks" onclick="loadPage(event, 'Front Page')">Front Page</button>
-            <button class="tablinks" onclick="loadPage(event, 'Inner Left Page')">Inner Left Page</button>
-            <button class="tablinks" onclick="loadPage(event, 'Inner Right Page')">Inner Right Page</button>
-            <button class="tablinks" onclick="loadPage(event, 'Back Page')">Back Page</button>
+            <button class="tablinks" id="front" onclick="loadPage(event, 'front')">Front Page</button>
+            <button class="tablinks" id="innerLeft" onclick="loadPage(event, 'innerLeft')">Inner Left Page</button>
+            <button class="tablinks" id="innerRight" onclick="loadPage(event, 'innerRight')">Inner Right Page</button>
             </div>
 
             <div class="tabcontent">
-                <h3 id="pageName">Front Page</h3>
                 <div id="viewPage">
                     <select id="elementList" style="width:400px;height:300px;font-size:20px;" size="10">
                         <option>Please load from Database</option>
