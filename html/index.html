@@ -132,7 +132,7 @@
         </div>
     </div>
 
-    <div>
+    <div id="createCard">
         <h2>Create a card</h2>
         <form name="createCardForm" method="post" name="createCard">
             Event Type: <input name="eventType" value="" />
@@ -146,6 +146,43 @@
             </select>
             <br>
             <input type="button" value="Create"  onClick="JavaScript:createCard(this)">
+        </form>
+    </div>
+
+    <div id="viewPage">
+        <div id="selectPage">
+            <h2>Select the Page to view/edit</h2>
+            <button id="btnFront">Front</button> <button id="btnInner1">Inner Left</button> <button id="btnInner2">Inner Right</button> <button id="btnBack">Back</button>
+        </div>
+        <div id="viewPage">
+            Element(s) in Page:
+            <br>
+            <select id="elementList" size="10">
+                <option>Please load from Database</option>
+            </select>
+            <br>
+            <button type="button" id="addElemBtn" name="addElemBtn">Add New Element</button>
+            <br>
+            <button type="button" id="deleteElemBtn" name="deleteElemBtn">Delete Selected Element</button>
+        </div>
+    </div>
+
+    <div id="addElem">
+        <h2>Add a new Element:</h2>
+
+        <h3>Add a Text:</h3>
+        <form name="addTextForm" method="post" name="addText">
+            Text Content: <input name="textContent" value="" />
+            <br>
+            Text Font: <input name="textFont" value=""/>
+            <br>
+            Text Type: <input name="textType" value=""/>
+            <br>
+            Position:
+            <br>
+            x: <input name="textLocationX" value=""/>, y: <input name="textLocationY" value=""/>
+            <br>
+            <input type="button" value="Add Text"  onClick="JavaScript:addText(this)">
         </form>
     </div>
 </body>
