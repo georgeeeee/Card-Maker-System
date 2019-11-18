@@ -1,4 +1,43 @@
 <html>
+<style>
+body {font-family: Arial;}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript">
@@ -115,75 +154,113 @@
             };
         }
 
+        function viewCard(e) {
+
+        }
+
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            document.getElementById("cityName").innerHTML = cityName;
+            //for (i = 0; i < tabcontent.length; i++) {
+            //    tabcontent[i].style.display = "none";
+            //}
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            //document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
     </script>
 </head>
 
 <body onload="listAllCard()">
     <h1>Card Maker</h1>
 
-    <div>
-        <h2>List of Cards</h2> 
+    <div class="left" style="float:left;width:600px;">
         <div>
-            <select id="loadCardList" style="width:400px;height:300px;font-size:20px;" size="10">
-            </select>
-            <br>
-            <button type="button" id="listBtn" style="width:196px;font-size:15px;padding:3px;" name="listBtn" onClick="JavaScript:listAllCard(this)">List All Cards</button>
-            <button type="button" id="deleteBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteBtn" onClick="JavaScript:deleteCard(this)">Delete Selected Card</button>
+            <h2>List of Cards</h2> 
+            <div>
+                <select id="loadCardList" style="width:400px;height:300px;font-size:20px;" size="10">
+                </select>
+                <br>
+                <button type="button" id="listBtn" style="width:196px;font-size:15px;padding:3px;" name="listBtn" onClick="JavaScript:viewCard(this)">View Card</button>
+                <button type="button" id="deleteBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteBtn" onClick="JavaScript:deleteCard(this)">Delete Selected Card</button>
+            </div>
+        </div>
+
+        <div id="createCard">
+            <h2>Create a card</h2>
+            <form name="createCardForm" method="post" name="createCard">
+                Event Type: <input name="eventType" value="" />
+                <br>
+                Recipient: <input name="recipient" value=""/>
+                <br>
+                Orientation: 
+                <select name="orientation">
+                    <option>Landscape</option>
+                    <option>Portrait</option>
+                </select>
+                <br>
+                <input type="button" value="Create"  onClick="JavaScript:createCard(this)">
+            </form>
         </div>
     </div>
 
-    <div id="createCard">
-        <h2>Create a card</h2>
-        <form name="createCardForm" method="post" name="createCard">
-            Event Type: <input name="eventType" value="" />
-            <br>
-            Recipient: <input name="recipient" value=""/>
-            <br>
-            Orientation: 
-            <select name="orientation">
-            	<option>Landscape</option>
-            	<option>Portrait</option>
-            </select>
-            <br>
-            <input type="button" value="Create"  onClick="JavaScript:createCard(this)">
-        </form>
-    </div>
+    <div style="float:right;width:700px;">
+        <div class="tab">
+            <button class="tablinks" onclick="openCity(event, 'London')">London</button>
+            <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
+            <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+            </div>
 
-    <div id="viewPage">
-        <div id="selectPage">
-            <h2>Select the Page to view/edit</h2>
-            <button id="btnFront">Front</button> <button id="btnInner1">Inner Left</button> <button id="btnInner2">Inner Right</button> <button id="btnBack">Back</button>
+            <div class="tabcontent">
+                <h3 id="cityName">London</h3>
+                <p>London is the capital city of England.</p>
+            </div>
         </div>
+
         <div id="viewPage">
-            Element(s) in Page:
-            <br>
-            <select id="elementList" size="10">
-                <option>Please load from Database</option>
-            </select>
-            <br>
-            <button type="button" id="addElemBtn" name="addElemBtn">Add New Element</button>
-            <br>
-            <button type="button" id="deleteElemBtn" name="deleteElemBtn">Delete Selected Element</button>
+            <div id="selectPage">
+                <h2>Select the Page to view/edit</h2>
+                <button id="btnFront">Front</button> <button id="btnInner1">Inner Left</button> <button id="btnInner2">Inner Right</button> <button id="btnBack">Back</button>
+            </div>
+            <div id="viewPage">
+                Element(s) in Page:
+                <br>
+                <select id="elementList" size="10">
+                    <option>Please load from Database</option>
+                </select>
+                <br>
+                <button type="button" id="addElemBtn" name="addElemBtn">Add New Element</button>
+                <br>
+                <button type="button" id="deleteElemBtn" name="deleteElemBtn">Delete Selected Element</button>
+            </div>
         </div>
-    </div>
 
-    <div id="addElem">
-        <h2>Add a new Element:</h2>
+        
 
-        <h3>Add a Text:</h3>
-        <form name="addTextForm" method="post" name="addText">
-            Text Content: <input name="textContent" value="" />
-            <br>
-            Text Font: <input name="textFont" value=""/>
-            <br>
-            Text Type: <input name="textType" value=""/>
-            <br>
-            Position:
-            <br>
-            x: <input name="textLocationX" value=""/>, y: <input name="textLocationY" value=""/>
-            <br>
-            <input type="button" value="Add Text"  onClick="JavaScript:addText(this)">
-        </form>
+        <div id="addElem">
+            <h2>Add a new Element:</h2>
+
+            <h3>Add a Text:</h3>
+            <form name="addTextForm" method="post" name="addText">
+                Text Content: <input name="textContent" value="" />
+                <br>
+                Text Font: <input name="textFont" value=""/>
+                <br>
+                Text Type: <input name="textType" value=""/>
+                <br>
+                Position:
+                <br>
+                x: <input name="textLocationX" value=""/>, y: <input name="textLocationY" value=""/>
+                <br>
+                <input type="button" value="Add Text"  onClick="JavaScript:addText(this)">
+            </form>
+        </div>
+        
     </div>
 </body>
 </html>
