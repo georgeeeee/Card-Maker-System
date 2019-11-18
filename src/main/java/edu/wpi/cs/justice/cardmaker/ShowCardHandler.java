@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -17,17 +18,15 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.CardDAO;
-import edu.wpi.cs.justice.cardmaker.http.AddTextRequest;
-import edu.wpi.cs.justice.cardmaker.http.AddTextResponse;
 import edu.wpi.cs.justice.cardmaker.http.ShowCardRequest;
 import edu.wpi.cs.justice.cardmaker.http.ShowCardResponse;
 import edu.wpi.cs.justice.cardmaker.model.Card;
 import edu.wpi.cs.justice.cardmaker.model.Page;
-import edu.wpi.cs.justice.cardmaker.model.Text;
 
 public class ShowCardHandler implements RequestStreamHandler{
-	public LambdaLogger logger = null;
+	private LambdaLogger logger = null;
 	private CardDAO cardDao = new CardDAO();
+	private ElementDAO elementDAO = new ElementDAO();
 
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
@@ -72,8 +71,12 @@ public class ShowCardHandler implements RequestStreamHandler{
 			try {
 				Card card = cardDao.getCard(cardId);
 				List<Page> pages = cardDao.getPage(cardId);
+				for (Page page : pages){
+					page.setTexts(elementDAO.getTexts(page.getPageId()));
+					page.setImages(elementDAO.getImages(page.getPageId()));
+				}
 				card.setPages(pages);
-				
+
 				response = new ShowCardResponse(card, 200);
 			} catch (Exception e) {
 				response = new ShowCardResponse("Unable to show card: " +  e.getMessage() , 400);

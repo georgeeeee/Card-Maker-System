@@ -6,59 +6,40 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.text.ParseException;
 
+import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
-import edu.wpi.cs.justice.cardmaker.http.AddTextRequest;
-import edu.wpi.cs.justice.cardmaker.http.AddTextResponse;
-import edu.wpi.cs.justice.cardmaker.http.CreateCardRequest;
-import edu.wpi.cs.justice.cardmaker.http.CreateCardResponse;
-import edu.wpi.cs.justice.cardmaker.model.Text;
-import util.Util;
+import edu.wpi.cs.justice.cardmaker.http.DeleteCardResponse;
+import edu.wpi.cs.justice.cardmaker.http.DeleteTextRequest;
 
-public class AddTextHandler implements RequestStreamHandler {
-    LambdaLogger logger;
+public class DeleteTextHandler implements RequestStreamHandler {
 
-    Text AddText(String textString, String fontName, String fontSize, String locationX, String locationY, String pageId, String fontType) throws Exception {
-        if (logger != null) {
-            logger.log("in addText");
-        }
-        ElementDAO dao = new ElementDAO();
-
-        final String elementId = Util.generateUniqueId();
-        Text text = new Text(elementId, textString, fontName, fontSize, fontType, locationX, locationY);
-        if (dao.addText(text)) {
-            if (dao.addPageElement(text, locationX, locationY, pageId)) {
-                return text;
-            }
-        }
-        return text;
-    }
+    public LambdaLogger logger = null;
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
         logger = context.getLogger();
+        logger.log("Loading Java Lambda handler to delete text");
 
-        // set up response
         JSONObject headerJson = new JSONObject();
         headerJson.put("Content-Type", "application/json");  // not sure if needed anymore?
-        headerJson.put("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+        headerJson.put("Access-Control-Allow-Methods", "DELETE,GET,POST,OPTIONS");
         headerJson.put("Access-Control-Allow-Origin", "*");
 
         JSONObject responseJson = new JSONObject();
         responseJson.put("headers", headerJson);
 
-        AddTextResponse response = null;
+        DeleteCardResponse response = null;
 
-        // extract body from incoming HTTP POST request. If any error, then return 422 error
+        // extract body from incoming HTTP DELETE request. If any error, then return 422 error
         String body;
         boolean processed = false;
         try {
@@ -71,31 +52,46 @@ public class AddTextHandler implements RequestStreamHandler {
             if (body == null) {
                 body = event.toJSONString();  // this is only here to make testing easier
             }
-        } catch (org.json.simple.parser.ParseException pe) {
+        } catch (ParseException pe) {
             logger.log(pe.toString());
-            response = new AddTextResponse(pe.getMessage(), 400);  // unable to process input
+            response = new DeleteCardResponse(400, "Bad Request:" + pe.getMessage());  // unable to process input
             responseJson.put("body", new Gson().toJson(response));
             processed = true;
             body = null;
         }
 
         if (!processed) {
-            AddTextRequest req = new Gson().fromJson(body, AddTextRequest.class);
+            DeleteTextRequest req = new Gson().fromJson(body, DeleteTextRequest.class);
+            logger.log(req.toString());
+
+            ElementDAO dao = new ElementDAO();
+
+            // See how awkward it is to call delete with an object, when you only
+            // have one part of its information?
+            String elementId = req.elementId;
+            String pageId = req.pageId;
 
             try {
-                Text text = AddText(req.text, req.fontName, req.fontSize, req.locationX, req.locationY, req.pageId, req.fontType);
-                response = new AddTextResponse(text, 200);
+                if (dao.deleteText(elementId, pageId)) {
+                    response = new DeleteCardResponse(200);
+                } else {
+                    response = new DeleteCardResponse(400, "Unable to delete text.");
+                }
             } catch (Exception e) {
-                response = new AddTextResponse("Unable to add text: " + e.getMessage(), 400);
+                response = new DeleteCardResponse(403, e.getMessage());
             }
+
         }
+        // compute proper response
 
         responseJson.put("body", new Gson().toJson(response));
         responseJson.put("statusCode", response.statusCode);
 
+        logger.log("end result:" + responseJson.toJSONString());
         logger.log(responseJson.toJSONString());
         OutputStreamWriter writer = new OutputStreamWriter(output, "UTF-8");
         writer.write(responseJson.toJSONString());
         writer.close();
     }
+
 }
