@@ -158,9 +158,9 @@ body {font-family: Arial;}
 
         }
 
-        function openCity(evt, cityName) {
+        function loadPage(evt, pageName) {
             var i, tabcontent, tablinks;
-            document.getElementById("cityName").innerHTML = cityName;
+            document.getElementById("pageName").innerHTML = pageName;
             //for (i = 0; i < tabcontent.length; i++) {
             //    tabcontent[i].style.display = "none";
             //}
@@ -177,9 +177,9 @@ body {font-family: Arial;}
 </head>
 
 <body onload="listAllCard()">
-    <h1>Card Maker</h1>
+    <h1 style="position: relative; left: 45%;">Card Maker</h1>
 
-    <div class="left" style="float:left;width:600px;">
+    <div class="left" style="position: absolute; left: 10%;">
         <div>
             <h2>List of Cards</h2> 
             <div>
@@ -209,58 +209,46 @@ body {font-family: Arial;}
         </div>
     </div>
 
-    <div style="float:right;width:700px;">
+    <div style="position: absolute; right: 10%;">
+        <div id="selectPage">
+            <h2>Select the Page to view/edit</h2>
+        </div>
         <div class="tab">
-            <button class="tablinks" onclick="openCity(event, 'London')">London</button>
-            <button class="tablinks" onclick="openCity(event, 'Paris')">Paris</button>
-            <button class="tablinks" onclick="openCity(event, 'Tokyo')">Tokyo</button>
+            <button class="tablinks" onclick="loadPage(event, 'Front Page')">Front Page</button>
+            <button class="tablinks" onclick="loadPage(event, 'Inner Left Page')">Inner Left Page</button>
+            <button class="tablinks" onclick="loadPage(event, 'Inner Right Page')">Inner Right Page</button>
+            <button class="tablinks" onclick="loadPage(event, 'Back Page')">Back Page</button>
             </div>
 
             <div class="tabcontent">
-                <h3 id="cityName">London</h3>
-                <p>London is the capital city of England.</p>
+                <h3 id="pageName">Front Page</h3>
+                <div id="viewPage">
+                    <select id="elementList" style="width:400px;height:300px;font-size:20px;" size="10">
+                        <option>Please load from Database</option>
+                    </select>
+                    <br>
+                    <button type="button" id="deleteElemBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteElemBtn" onClick="JavaScript:deleteElem(this)">Delete Selected Element</button>
+                </div>
+                <div id="addElem">
+                    <h2>Add a new Element:</h2>
+
+                    <h3>Add a Text:</h3>
+                    <form name="addTextForm" method="post" name="addText">
+                        Text Content: <input name="textContent" value="" />
+                        <br>
+                        Text Font: <input name="textFont" value=""/>
+                        <br>
+                        Text Type: <input name="textType" value=""/>
+                        <br>
+                        Position:
+                        <br>
+                        x: <input name="textLocationX" style="width: 50px" value=""/>, y: <input name="textLocationY" style="width: 50px" value=""/>
+                        <br>
+                        <input type="button" value="Add Text"  onClick="JavaScript:addText(this)">
+                    </form>
+                </div>
             </div>
         </div>
-
-        <div id="viewPage">
-            <div id="selectPage">
-                <h2>Select the Page to view/edit</h2>
-                <button id="btnFront">Front</button> <button id="btnInner1">Inner Left</button> <button id="btnInner2">Inner Right</button> <button id="btnBack">Back</button>
-            </div>
-            <div id="viewPage">
-                Element(s) in Page:
-                <br>
-                <select id="elementList" size="10">
-                    <option>Please load from Database</option>
-                </select>
-                <br>
-                <button type="button" id="addElemBtn" name="addElemBtn">Add New Element</button>
-                <br>
-                <button type="button" id="deleteElemBtn" name="deleteElemBtn">Delete Selected Element</button>
-            </div>
-        </div>
-
-        
-
-        <div id="addElem">
-            <h2>Add a new Element:</h2>
-
-            <h3>Add a Text:</h3>
-            <form name="addTextForm" method="post" name="addText">
-                Text Content: <input name="textContent" value="" />
-                <br>
-                Text Font: <input name="textFont" value=""/>
-                <br>
-                Text Type: <input name="textType" value=""/>
-                <br>
-                Position:
-                <br>
-                x: <input name="textLocationX" value=""/>, y: <input name="textLocationY" value=""/>
-                <br>
-                <input type="button" value="Add Text"  onClick="JavaScript:addText(this)">
-            </form>
-        </div>
-        
     </div>
 </body>
 </html>
