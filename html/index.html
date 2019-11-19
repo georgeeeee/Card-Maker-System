@@ -52,6 +52,9 @@ body {font-family: Arial;}
         const list_url = api_url + "/cards" ;
 
         var cardList = null;
+        var currentPage = null;
+        var currentCard = null;
+        var pages = null;
 
         function processCreateCardResponse(response) {
             var response = JSON.parse(response);
@@ -159,10 +162,9 @@ body {font-family: Arial;}
             };
         }
 
-        var pages = null;
-
         function showPage(response) {
             var response = JSON.parse(response);
+            currentCard = response.card;
             pages = response.card.pages;
 
             var cardViewContainer = document.getElementById("CardViewContainer");
@@ -211,6 +213,7 @@ body {font-family: Arial;}
 
         function loadPage(evt, pageName) {
             var page = pages.find(x => x.name === pageName);
+            currentPage = page;
             var i, tabcontent, tablinks;
             //document.getElementById("pageName").innerHTML = pageName;
             tablinks = document.getElementsByClassName("tablinks");
@@ -220,6 +223,82 @@ body {font-family: Arial;}
             evt.currentTarget.className += " active";
 
             loadElements(page);
+        }
+
+        function addText(event) {
+            var add_text_url = api_url + '/page/' + currentPage.pageId + '/text';
+
+            var textContent = document.getElementById('textContent').value;
+            var textFont = document.getElementById('textFont').value;
+            var textType = document.getElementById('textType').value;
+            var textSize = document.getElementById('textSize').value;
+            var textLocationX = document.getElementById('textLocationX').value;
+            var textLocationY = document.getElementById('textLocationY').value;
+
+            if(!textContent && !textFont && !textType && !textLocationX && !textLocationY && !textSize) {
+                return;
+            }
+            
+            var data = {};
+            data["pageId"] = currentPage.pageId;
+            data["text"] = textContent;
+            data["fontName"] = textFont;
+            data["fontType"] = textType;
+            data["fontSize"] = textSize;
+            data["locationX"] = textLocationX;
+            data["locationY"] = textLocationY;
+
+            var js = JSON.stringify(data);
+            console.log('JS: '+ js );
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", add_text_url, true);
+
+            // send the collected data as JSON
+            xhr.send(js);
+
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                console.log(xhr);
+                console.log(xhr.request);
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                    console.log ("XHR:" + xhr.responseText);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                    
+                }
+            };
+        }
+
+        function deleteElement(event){
+            var elementListContainer = document.getElementById('elementList');
+            var elementId = elementListContainer.options[elementListContainer.selectedIndex].value;
+            var pageId = currentPage.pageId
+
+            const delete_element_url = api_url + "/page/" + pageId + "/element/" + elementId; 
+            var data = {};
+            data["pageId"] = pageId;
+            data["elementId"] = elementId;
+
+            var data = JSON.stringify(data);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", delete_element_url);
+            xhr.send(data);
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        window.location.reload(true)
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+
         }
 
     </script>
@@ -271,22 +350,25 @@ body {font-family: Arial;}
                         <option>Please load from Database</option>
                     </select>
                     <br>
-                    <button type="button" id="deleteElemBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteElemBtn" onClick="JavaScript:deleteElem(this)">Delete Selected Element</button>
+                    <button type="button" id="deleteElemBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteElemBtn" onClick="JavaScript:deleteElement(this)">Delete Selected Element</button>
                 </div>
                 <div id="addElem">
                     <h2>Add a new Element:</h2>
 
                     <h3>Add a Text:</h3>
                     <form name="addTextForm" method="post" name="addText">
-                        Text Content: <input name="textContent" value="" />
+                        Text Content: <input id="textContent" name="textContent" value="" />
                         <br>
-                        Text Font: <input name="textFont" value=""/>
+                        Text Font: <input id="textFont" name="textFont" value=""/>
                         <br>
-                        Text Type: <input name="textType" value=""/>
+                        Text Type: <input id="textType" name="textType" value=""/>
+                        <br>
+                        Text Size: <input id="textSize" name="textSize" value=""/>
                         <br>
                         Position:
                         <br>
-                        x: <input name="textLocationX" style="width: 50px" value=""/>, y: <input name="textLocationY" style="width: 50px" value=""/>
+                        x: <input id="textLocationX" name="textLocationX" style="width: 50px" value=""/>,
+                        y: <input id="textLocationY" name="textLocationY" style="width: 50px" value=""/>
                         <br>
                         <input type="button" value="Add Text"  onClick="JavaScript:addText(this)">
                     </form>
