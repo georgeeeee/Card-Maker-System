@@ -184,11 +184,19 @@ body {font-family: Arial;}
 
             elementlistContainer.length = 0;
 
+            canvas = document.getElementById('card-canvas');
+            var context = canvas.getContext('2d');
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
             var texts = page.texts;
             for (var i in texts) {
+                context.font = texts[i].fontType + ' ' + texts[i].fontSize + 'px ' + texts[i].fontName;
+                context.fillText(texts[i].text, texts[i].locationX, texts[i].locationY);
+
                 var option = document.createElement("option");
                 option.value = texts[i].elementId;
-                option.text = texts[i].text + '_' + texts[i].fontName + '_' + texts[i].fontType + '_' + texts[i].fontSize + '_(' + texts[i].locationX + ', ' + texts[i].locationY + ')';
+                option.text = texts[i].text + '_' + texts[i].fontName + '_' + texts[i].fontType + '_' + texts[i].fontSize;
                 elementlistContainer.add(option);
             }
         }
@@ -277,7 +285,7 @@ body {font-family: Arial;}
             };
         }
 
-        function deleteElement(event){
+        function deleteElement(event) {
             var elementListContainer = document.getElementById('elementList');
             var elementId = elementListContainer.options[elementListContainer.selectedIndex].value;
             var pageId = currentPage.pageId
@@ -351,7 +359,8 @@ body {font-family: Arial;}
 
             <div class="tabcontent">
                 <div id="viewPage">
-                    <select id="elementList" style="width:400px;height:300px;font-size:20px;" size="10">
+                    <canvas id="card-canvas" width="400" height="300" style="border:1px solid #000000;"></canvas>
+                    <select id="elementList" style="overflow:auto;display:block;width:400px;height:100px;font-size:16px;margin-top:10px" size="10">
                         <option>Please load from Database</option>
                     </select>
                     <br>
@@ -362,18 +371,18 @@ body {font-family: Arial;}
 
                     <h3>Add a Text:</h3>
                     <form name="addTextForm" method="post" name="addText">
-                        Text Content: <input id="textContent" name="textContent" value="" />
+                        Text Content: <input id="textContent" type="text" name="textContent" value="" />
                         <br>
-                        Text Font: <input id="textFont" name="textFont" value=""/>
+                        Text Font: <input id="textFont" type="text" name="textFont" value=""/>
                         <br>
-                        Text Type: <input id="textType" name="textType" value=""/>
+                        Text Type: <input id="textType" type="text" name="textType" value=""/>
                         <br>
-                        Text Size: <input id="textSize" name="textSize" value=""/>
+                        Text Size: <input id="textSize" type="number" name="textSize" value=""/>
                         <br>
                         Position:
                         <br>
-                        x: <input id="textLocationX" name="textLocationX" style="width: 50px" value=""/>,
-                        y: <input id="textLocationY" name="textLocationY" style="width: 50px" value=""/>
+                        x: <input id="textLocationX" type="number" name="textLocationX" style="width: 50px" value=""/>,
+                        y: <input id="textLocationY" type="number" name="textLocationY" style="width: 50px" value=""/>
                         <br>
                         <input type="button" value="Add Text"  onClick="JavaScript:addText(this)">
                     </form>
