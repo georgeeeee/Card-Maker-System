@@ -71,6 +71,8 @@ body {font-family: Arial;}
             for (i = 0; i < length; i++) {
                 cardlistContainer.options[i] = null;
             }
+            cardlistContainer.length = 0;
+
             for (var i in cards) {
                 var option = document.createElement("option");
                 option.value = cards[i].cardId;
@@ -180,11 +182,13 @@ body {font-family: Arial;}
                 elementlistContainer.options[i] = null;
             }
 
+            elementlistContainer.length = 0;
+
             var texts = page.texts;
             for (var i in texts) {
                 var option = document.createElement("option");
                 option.value = texts[i].elementId;
-                option.text = texts[i].text + '_' + texts[i].fontName + '_' + texts[i].fontType;
+                option.text = texts[i].text + '_' + texts[i].fontName + '_' + texts[i].fontType + '_' + texts[i].fontSize + '_(' + texts[i].locationX + ', ' + texts[i].locationY + ')';
                 elementlistContainer.add(option);
             }
         }
@@ -263,6 +267,7 @@ body {font-family: Arial;}
                 if (xhr.readyState == XMLHttpRequest.DONE) {
                     if (xhr.status == 200) {
                     console.log ("XHR:" + xhr.responseText);
+                    viewCard(event);
                     } else if (xhr.status == 400) {
                         alert ("unable to process request");
                     }
@@ -291,7 +296,7 @@ body {font-family: Arial;}
             xhr.onloadend = function () {
                 if (xhr.readyState == XMLHttpRequest.DONE) {
                     if (xhr.status == 200) {
-                        window.location.reload(true)
+                        viewCard(event);
                     } else if (xhr.status == 400) {
                         alert ("unable to process request");
                     }
