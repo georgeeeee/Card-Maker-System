@@ -183,8 +183,14 @@ body {font-family: Arial;}
             }
 
             elementlistContainer.length = 0;
-
             canvas = document.getElementById('card-canvas');
+            if(currentCard.orientation.toLowerCase() == 'portrait') {
+                canvas.width = 300;
+                canvas.height = 400;
+            } else {
+                canvas.width = 400;
+                canvas.height = 300;
+            }
             var context = canvas.getContext('2d');
 
             context.clearRect(0, 0, canvas.width, canvas.height);
