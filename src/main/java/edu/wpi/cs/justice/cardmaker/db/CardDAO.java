@@ -7,6 +7,7 @@ import edu.wpi.cs.justice.cardmaker.model.Card;
 import edu.wpi.cs.justice.cardmaker.model.Image;
 import edu.wpi.cs.justice.cardmaker.model.Page;
 import edu.wpi.cs.justice.cardmaker.model.Text;
+import util.Util;
 
 public class CardDAO {
     java.sql.Connection conn;
@@ -182,4 +183,62 @@ public class CardDAO {
         String locationY = elementSet.getString("location_Y");
         return new Text(elementId,text,fontName,fontSize,fontType,locationX,locationY);
     }
+
+	public Card duplicateCard(String cardId) throws Exception {
+		try {
+            Card card = getCard(cardId) ;
+            String newcardId = util.Util.generateUniqueId();
+
+            PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO cards (card_id, event_type, recipient, orientation) values(?,?,?,?);");
+            ps.setString(1, newcardId);
+            ps.setString(2, card.getEventType());
+            ps.setString(3, card.getRecipient());
+            ps.setString(4, card.getOrientation());
+
+            ps.execute();
+            ps.close();
+            
+            return new Card(newcardId, card.getEventType(), card.getRecipient(), card.getOrientation());
+    	} catch(Exception e) {
+    		throw new Exception("Failed to duplicate card: " + e.getMessage());
+    	}
+	}
+
+	public boolean duplicatePage(ArrayList<Page> orignPages) throws Exception{
+        try {
+            ElementDAO elementDAO = new ElementDAO();
+            ArrayList<Page> duplicatepages = new ArrayList<Page>();
+            //duplicate page
+            for(Page page: orignPages){
+                String newPageId = util.Util.generateUniqueId();
+                duplicatepages.add(new Page(page.getCardId(),newPageId,page.getName()));
+            }
+            addPages(duplicatepages);
+
+            for(Page page: orignPages){
+                ArrayList<String> elementIds = elementDAO.getPageElement(page.getPageId());
+                //duplicate Page Elements
+                for(String elementId:elementIds){
+                    for(Page duplicatepage:duplicatepages){
+                        if(duplicatepage.getPageName() == page.getPageName()){
+                            elementDAO.duplicatePageElement(elementId,page.getPageId(),duplicatepage.getPageId());
+                        }
+                    }
+                //duplicate text
+                for(Text text:page.getTexts()){
+                        elementDAO.duplicateText(text);
+                    }
+                //duplicate Image
+                for(Image image:page.getImages()){
+                        elementDAO.duplicateImage(image);
+                    }
+                }
+            }
+            
+            return true;
+        } catch (Exception e) {
+            throw new Exception("Failed to duplicate page: " + e.getMessage());
+        }
+	}
 }

@@ -37,7 +37,7 @@ public class AddTextHandler implements RequestStreamHandler {
         final String elementId = Util.generateUniqueId();
         Text text = new Text(elementId, textString, fontName, fontSize, fontType, locationX, locationY);
         if (dao.addText(text)) {
-            if (dao.addPageElement(text, locationX, locationY, pageId)) {
+            if (dao.addPageElement(text.getElementId(), locationX, locationY, pageId,null,null)) {
                 return text;
             }
         }
