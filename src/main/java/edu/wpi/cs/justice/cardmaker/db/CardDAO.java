@@ -93,6 +93,20 @@ public class CardDAO {
     		throw new Exception("Failed to get pages: " + e.getMessage());
     	}
     }
+
+    public String getCardId(String pageId) throws Exception {
+        String query = "SELECT card_id FROM pages WHERE page_id = ?";
+        try{
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, pageId);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+            return resultSet.getString(1);
+
+        } catch (SQLException e) {
+            throw new Exception("Failed to get cardId by pageId: " + e.getMessage());
+        }
+    }
     
     public Card getCard(String cardId) throws Exception {
     	String query = "SELECT * FROM cards WHERE card_id = ?";

@@ -42,7 +42,7 @@ public class TestThings {
 	public void testGetCard() {
 		try {
 			CardDAO cardDao = new CardDAO();
-			Card card = cardDao.getCard("ea21898ac38d4450b3d257bb1ee07b8f");
+			Card card = cardDao.getCard("708e3312327c4b3296456f4e8e508e43");
 			
 			System.out.println(card.getEventType() + " " + card.getOrientation() + " " + card.getOrientation());
 		} catch (Exception e) {

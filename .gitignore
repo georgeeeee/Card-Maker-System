@@ -59,6 +59,7 @@ hs_err_pid*
 #Intellij
 .aws-sam
 .idea
+.imi
 
 
 /target/

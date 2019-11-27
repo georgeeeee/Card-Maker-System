@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import edu.wpi.cs.justice.cardmaker.model.Image;
 import edu.wpi.cs.justice.cardmaker.model.Text;
 
+import static com.amazonaws.util.AWSRequestMetrics.Field.Exception;
+
 public class ElementDAO {
     java.sql.Connection conn;
 
@@ -83,22 +85,36 @@ public class ElementDAO {
         return texts;
     }
 
-    public int UpdateText(Text text) throws Exception{
-        String query = "UPDATE elements " +
+    public boolean UpdateText(Text text, String pageId) throws Exception{
+        String queryForElement = "UPDATE elements " +
                 "SET font_name = ?, font_type = ?, font_size = ?, text = ? " +
                 "WHERE element_id = ?";
+        String queryForPageElement = "UPDATE pageElements " +
+                "SET location_X = ?, location_Y = ? " +
+                "WHERE element_id = ? AND page_id = ?";
         try{
-            PreparedStatement ps = conn.prepareStatement(query);
+            PreparedStatement ps = conn.prepareStatement(queryForElement);
             ps.setString(1, text.getFontName());
             ps.setString(2, text.getFontType());
             ps.setString(3, text.getFontSize());
             ps.setString(4, text.getText());
             ps.setString(5, text.getElementId());
-            return ps.executeUpdate();
+            ps.executeUpdate();
+            ps.close();
+
+            PreparedStatement ps2 = conn.prepareStatement(queryForPageElement);
+            ps2.setString(1, text.getLocationX());
+            ps2.setString(2, text.getLocationY());
+            ps2.setString(3, text.getElementId());
+            ps2.setString(4, pageId);
+            ps2.executeUpdate();
+            ps2.close();
+
+            return true;
         } catch (Exception ex){
             throw new Exception("Failed to update text: " + ex.getMessage());
         } finally {
-            return 0;
+            return false;
         }
     }
 
