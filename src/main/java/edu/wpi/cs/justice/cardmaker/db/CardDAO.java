@@ -205,14 +205,14 @@ public class CardDAO {
     	}
 	}
 
-	public boolean duplicatePage(ArrayList<Page> orignPages) throws Exception{
+	public boolean duplicatePage(String newCardId,ArrayList<Page> orignPages) throws Exception{
         try {
             ElementDAO elementDAO = new ElementDAO();
             ArrayList<Page> duplicatepages = new ArrayList<Page>();
             //duplicate page
             for(Page page: orignPages){
                 String newPageId = util.Util.generateUniqueId();
-                duplicatepages.add(new Page(page.getCardId(),newPageId,page.getName()));
+                duplicatepages.add(new Page(newCardId,newPageId,page.getName()));
             }
             addPages(duplicatepages);
 

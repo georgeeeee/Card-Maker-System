@@ -43,7 +43,7 @@ public class DuplicateCardHandler implements RequestStreamHandler {
             page.setImages(elementDAO.getImages(page.getPageId()));
         }
 
-        if(cardDAO.duplicatePage(originPage)){
+        if(cardDAO.duplicatePage(duplicateCard.getCardId(),originPage)){
             return duplicateCard;
         }
         } catch (Exception e) {
