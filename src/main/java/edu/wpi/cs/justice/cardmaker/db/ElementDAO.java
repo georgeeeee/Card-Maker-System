@@ -83,6 +83,25 @@ public class ElementDAO {
         return texts;
     }
 
+    public int UpdateText(Text text) throws Exception{
+        String query = "UPDATE elements " +
+                "SET font_name = ?, font_type = ?, font_size = ?, text = ? " +
+                "WHERE element_id = ?";
+        try{
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, text.getFontName());
+            ps.setString(2, text.getFontType());
+            ps.setString(3, text.getFontSize());
+            ps.setString(4, text.getText());
+            ps.setString(5, text.getElementId());
+            return ps.executeUpdate();
+        } catch (Exception ex){
+            throw new Exception("Failed to update text: " + ex.getMessage());
+        } finally {
+            return 0;
+        }
+    }
+
     public ArrayList<Image> getImages(String pageId) throws Exception {
         ArrayList<Image> images = new ArrayList<Image>();
         String query = "SELECT location_X, location_Y, elements.element_id, imageUrl, width, height " +

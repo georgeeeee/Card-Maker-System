@@ -114,3 +114,4 @@ public class DuplicateCardHandler implements RequestStreamHandler {
 		writer.write(responseJson.toJSONString());  
 		writer.close();
     }
+}
