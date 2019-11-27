@@ -19,8 +19,9 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.CardDAO;
-import edu.wpi.cs.justice.cardmaker.http.CreateCardRequest;
-import edu.wpi.cs.justice.cardmaker.http.CreateCardResponse;
+import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
+import edu.wpi.cs.justice.cardmaker.http.DuplicateCardRequest;
+import edu.wpi.cs.justice.cardmaker.http.DuplicateCardResponse;
 import edu.wpi.cs.justice.cardmaker.model.Card;
 import edu.wpi.cs.justice.cardmaker.model.Page;
 import util.Util;
@@ -29,29 +30,26 @@ import util.Util;
 public class DuplicateCardHandler implements RequestStreamHandler {
 	LambdaLogger logger;
 	
-	Card createCard(String eventType, String recipient, String orientation) throws Exception {
-		if (logger != null) { logger.log("in createCard"); }
-		CardDAO dao = new CardDAO();
-		
-		final String cardId = Util.generateUniqueId();
-		Card card = new Card (cardId, eventType, recipient, orientation);
-		
-		if (dao.addCard(card)) {
-			return card;
-		}
-		
-		return card;
-	}
+	Card duplicateCard(String cardId) throws Exception {
+        try {
+            if (logger != null) { logger.log("!duplicateCard"); }
+        CardDAO cardDAO = new CardDAO();
+        ElementDAO elementDAO =new ElementDAO();
 
-	public void addPageRequest(Card card) throws Exception{
-		CardDAO dao = new CardDAO();
-		ArrayList<Page> pages = new ArrayList<Page>();
-		
-		for(String pageName: Util.pageNames){
-				pages.add(new Page(card.getCardId(), Util.generateUniqueId(), pageName));
-		}
-		
-		dao.addPages(pages);
+        Card duplicateCard = cardDAO.duplicateCard(cardId);
+        ArrayList<Page>originPage = cardDAO.getPage(cardId);
+        for (Page page : originPage){
+            page.setTexts(elementDAO.getTexts(page.getPageId()));
+            page.setImages(elementDAO.getImages(page.getPageId()));
+        }
+
+        if(cardDAO.duplicatePage(originPage)){
+            return duplicateCard;
+        }
+        } catch (Exception e) {
+            throw new Exception("Failed to duplicate card: " + e.getMessage());
+        }
+        return null; // shouldn't be here
 	}
 	
     @Override
@@ -67,7 +65,7 @@ public class DuplicateCardHandler implements RequestStreamHandler {
 		JSONObject responseJson = new JSONObject();
 		responseJson.put("headers", headerJson);
 
-		CreateCardResponse response = null;
+		DuplicateCardResponse response = null;
 
 		// extract body from incoming HTTP POST request. If any error, then return 422 error
 		String body;
@@ -78,31 +76,30 @@ public class DuplicateCardHandler implements RequestStreamHandler {
 			JSONObject event = (JSONObject) parser.parse(reader);
 			logger.log("event:" + event.toJSONString());
 	        
-			body = (String)event.get("body");
+			body = event.get("pathParameters").toString();
 			if (body == null) {
 				body = event.toJSONString();  // this is only here to make testing easier
 			}
 		} catch (ParseException pe) {
 			logger.log(pe.toString());
-			response = new CreateCardResponse(pe.getMessage(), 400);  // unable to process input
+			response = new DuplicateCardResponse(pe.getMessage(), 400);  // unable to process input
 			responseJson.put("body", new Gson().toJson(response));
 			processed = true;
 			body = null;
 		}
 		
 		if (!processed) {
-			CreateCardRequest req = new Gson().fromJson(body, CreateCardRequest.class);
+			DuplicateCardRequest req = new Gson().fromJson(body, DuplicateCardRequest.class);
 			
 			try {
-				Card card = createCard(req.eventType, req.recipient, req.orientation);
+				Card card = duplicateCard(req.cardId);
 				if (card != null) {
-					addPageRequest(card);
-					response = new CreateCardResponse(card, 200);
+					response = new DuplicateCardResponse(card, 200);
 				} else {
 //					response = new CreateCardResponse("", );
 				}
 			} catch (Exception e) {
-				response = new CreateCardResponse("Unable to create card: " +  e.getMessage() , 400);
+				response = new DuplicateCardResponse("Unable to duplicate card: " +  e.getMessage() , 400);
 			}
 		}
 
@@ -114,3 +111,4 @@ public class DuplicateCardHandler implements RequestStreamHandler {
 		writer.write(responseJson.toJSONString());  
 		writer.close();
     }
+}

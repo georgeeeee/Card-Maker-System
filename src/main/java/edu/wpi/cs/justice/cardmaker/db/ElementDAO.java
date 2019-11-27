@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import edu.wpi.cs.justice.cardmaker.model.Image;
+import edu.wpi.cs.justice.cardmaker.model.Page;
 import edu.wpi.cs.justice.cardmaker.model.Text;
+import util.Util;
 
 public class ElementDAO {
     java.sql.Connection conn;
@@ -36,16 +38,33 @@ public class ElementDAO {
             throw new Exception("Failed to add text: " + e.getMessage());
         }
     }
+    public boolean addImage(Image image) throws Exception {
+        try {
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO elements (element_id, type, text, font_name,font_size,font_type,imageUrl) values(?,?,?,?,?,?,?);");
+            ps.setString(1, image.getElementId());
+            ps.setString(2, "image");
+            ps.setString(3, null);
+            ps.setString(4, null);
+            ps.setString(5, null);
+            ps.setString(6, null);
+            ps.setString(7, image.getImageUrl());
+            ps.execute();
+            return true;
 
-    public boolean addPageElement(Text text, String locationX, String locationY, String pageId) throws Exception {
+        } catch (Exception e) {
+            throw new Exception("Failed to add text: " + e.getMessage());
+        }
+    }
+
+    public boolean addPageElement(String elementId, String locationX, String locationY, String pageId,String width,String height) throws Exception {
         try {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO pageElements (element_id, page_id, location_X, location_Y,width,height) values(?,?,?,?,?,?);");
-            ps.setString(1, text.getElementId());
+            ps.setString(1, elementId);
             ps.setString(2, pageId);
             ps.setString(3, locationX);
             ps.setString(4, locationY);
-            ps.setString(5, null);
-            ps.setString(6, null);
+            ps.setString(5, width);
+            ps.setString(6, height);
             ps.execute();
             return true;
 
@@ -53,7 +72,67 @@ public class ElementDAO {
             throw new Exception("Failed to add pageElement: " + e.getMessage());
         }
     }
+    public ArrayList<String> getPageElement(String  pageId) throws Exception{
+        ArrayList<String> ElementIds = new ArrayList<String>();
+        try {
+            String query = "SELECT * FROM pageElements WHERE page_id = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, pageId);
 
+            ResultSet resultSet = ps.executeQuery();
+
+            while (resultSet.next()) {
+                String elementId = resultSet.getString("element_id");
+                ElementIds.add(elementId);
+            }
+            return ElementIds;
+        } catch (Exception e) {
+            throw new Exception("Failed to get pageElement: " + e.getMessage());
+        }
+
+    }
+    public boolean duplicatePageElement(String elementId,String pageId,String newPageId) throws Exception{
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM pageElements WHERE element_id = ? AND page_id = ?");
+            ps.setString(1, elementId);
+            ps.setString(2, pageId);
+            ps.execute();
+
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                String locationX = resultSet.getString("location_X");
+                String locationY = resultSet.getString("location_Y");
+                String width = resultSet.getString("width");
+                String height = resultSet.getString("height");
+                addPageElement(elementId, locationX, locationY, newPageId, width, height);
+            }
+            return true;
+
+        } catch (Exception e) {
+            throw new Exception("Failed to duplicate pageElement: " + e.getMessage());
+        }
+
+    }
+    public boolean duplicateText(Text text) throws Exception{
+        try {
+            String newElementId = util.Util.generateUniqueId();
+            addText(new Text(newElementId, text.getText(), text.getFontName(), text.getFontSize(), text.getFontType(), text.getLocationX(), text.getLocationY()));
+            return true;
+
+        } catch (Exception e) {
+            throw new Exception("Failed to duplicate text " + e.getMessage());
+        }
+    }
+    public boolean duplicateImage(Image image) throws Exception{
+        try {
+            String newElementId = util.Util.generateUniqueId();
+            addImage(new Image(newElementId, image.getImageUrl(), image.getLocationX(), image.getLocationY(),image.getWidth(),image.getHeight()));
+            return true;
+
+        } catch (Exception e) {
+            throw new Exception("Failed to duplicate image " + e.getMessage());
+        }
+    }
     public ArrayList<Text> getTexts(String pageId) throws Exception {
         ArrayList<Text> texts = new ArrayList<Text>();
         String query = "SELECT location_X, location_Y, elements.element_id, text, font_name, font_size, font_type " +
