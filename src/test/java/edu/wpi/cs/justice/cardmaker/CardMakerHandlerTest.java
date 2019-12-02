@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,4 +32,15 @@ public class CardMakerHandlerTest {
 //        System.out.println(sampleOutputString);
 //        Assert.assertEquals(EXPECTED_OUTPUT_STRING, sampleOutputString);
 //    }
+    @Test
+	public void testGeneratePresignedUrl() {
+		try {
+			AddImageHandler handler = new AddImageHandler();
+			URL url = handler.GeneratePresignedUrl("123.png", "justice509");
+			Assert.assertNotNull(url);
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
 }

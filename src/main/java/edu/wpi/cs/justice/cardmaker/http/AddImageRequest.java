@@ -6,15 +6,15 @@ public class AddImageRequest {
 	public String locationY;
 	public String width;
 	public String height;
-	public String imgUrl;
+	public String fileName;
 
 	public AddImageRequest(String width, String height, String locationX, String locationY, String pageId,
-			String imgUrl) {
+			String fileName) {
 		this.width = width;
 		this.height = height;
 		this.pageId = pageId;
 		this.locationX = locationX;
 		this.locationY = locationY;
-		this.imgUrl = imgUrl;
+		this.fileName = fileName;
 	}
 }

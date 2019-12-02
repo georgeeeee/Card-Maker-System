@@ -13,4 +13,8 @@ public class Util {
 	public static String generateUniqueId() {
 		return UUID.randomUUID().toString().replace("-", "");
 	}
+	
+	public static String generateS3BucketUrl(String fileName) {
+		return "https://justice509.s3.amazonaws.com/images/" + fileName;
+	}
 }
