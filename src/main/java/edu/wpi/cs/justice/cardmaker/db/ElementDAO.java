@@ -57,7 +57,18 @@ public class ElementDAO {
             return true;
 
         } catch (Exception e) {
-            throw new Exception("Failed to add text: " + e.getMessage());
+            throw new Exception("Failed to add image: " + e.getMessage());
+        }
+    }
+    public boolean editImage(Image image) throws Exception{
+        try {
+            PreparedStatement ps = conn.prepareStatement("UPDATE elements set imageUrl=? WHERE element_id = ?");
+            ps.setString(1, image.getImageUrl());
+            ps.setString(2, image.getElementId());
+            ps.execute();
+            return true;
+        } catch (Exception ex) {
+        	throw new Exception("Fail to edit image:" + ex.getMessage());
         }
     }
 
@@ -243,4 +254,5 @@ public class ElementDAO {
 			throw new Exception("Failed to delete text: " + e.getMessage());
 		}
 	}
+
 }
