@@ -35,8 +35,7 @@ public class CardMakerHandlerTest {
     @Test
 	public void testGeneratePresignedUrl() {
 		try {
-			AddImageHandler handler = new AddImageHandler();
-			URL url = handler.GeneratePresignedUrl("123.png", "justice509");
+			URL url = util.Util.GeneratePresignedUrl("123.png", "justice509");
 			Assert.assertNotNull(url);
 			
 		} catch (Exception e) {

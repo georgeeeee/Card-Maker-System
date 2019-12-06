@@ -80,10 +80,10 @@ public class AddImageHandler implements RequestStreamHandler {
 			AddImageRequest req = new Gson().fromJson(body, AddImageRequest.class);
 
             try {
-				URL url = GeneratePresignedUrl(req.fileName, "justice509");
+				URL url = util.Util.GeneratePresignedUrl(req.fileName, "justice509");
 				ElementDAO elementDAO = new ElementDAO();
 				String newImgId= util.Util.generateUniqueId();
-				Image newImage = new Image(newImgId, url.toString(), req.locationX, req.locationY, req.width, req.height);
+				Image newImage = new Image(newImgId, util.Util.generateS3BucketUrl(req.fileName), req.locationX, req.locationY, req.width, req.height);
 				elementDAO.addImage(newImage);
 				elementDAO.addPageElement(newImgId, req.locationX, req.locationY, req.pageId, req.width, req.height);
 
@@ -100,27 +100,5 @@ public class AddImageHandler implements RequestStreamHandler {
 		OutputStreamWriter writer = new OutputStreamWriter(output, "UTF-8");
 		writer.write(responseJson.toJSONString());
 		writer.close();
-	}
-
-	public URL GeneratePresignedUrl(String objectKey, String bucketName) throws Exception {
-		AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withCredentials(new ProfileCredentialsProvider())
-				.withRegion(Regions.US_EAST_1).build();
-
-		// Set the pre-signed URL to expire after one hour.
-		java.util.Date expiration = new java.util.Date();
-		long expTimeMillis = expiration.getTime();
-		expTimeMillis += 1000 * 60 * 60;
-		expiration.setTime(expTimeMillis);
-
-		// Generate the pre-signed URL.
-		System.out.println("Generating pre-signed URL.");
-		GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName, objectKey)
-				.withMethod(HttpMethod.PUT).withExpiration(expiration);
-		URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
-
-		System.out.println("Pre-Signed URL: " + url.toString());
-
-		return url;
-
 	}
 }
