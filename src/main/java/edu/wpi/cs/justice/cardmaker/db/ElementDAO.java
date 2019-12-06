@@ -57,7 +57,34 @@ public class ElementDAO {
             throw new Exception("Failed to add text: " + e.getMessage());
         }
     }
+    public boolean editImage(Image image) throws Exception{
+        try {
+            PreparedStatement ps = conn.prepareStatement("UPDATE elements set imageUrl=? WHERE element_id = ?");
+            ps.setString(1, image.getImageUrl());
+            ps.setString(2, image.getElementId());
+            ps.execute();
+            return true;
 
+        } catch (Exception e) {
+            throw new Exception("Failed to add text: " + e.getMessage());
+        }
+    }
+    public boolean editPageElement(String elementId, String locationX, String locationY, String pageId,String width,String height) throws Exception{
+        try {
+            PreparedStatement ps = conn.prepareStatement("UPDATE pageElements SET location_X = ?,location_Y = ?, width = ?, height = ? WHERE element_id = ? AND page_id = ?");
+            ps.setString(1, locationX);
+            ps.setString(2, locationY);
+            ps.setString(3, width);
+            ps.setString(4, height);
+            ps.setString(5, elementId);
+            ps.setString(6, pageId);
+            ps.execute();
+            return true;
+
+        } catch (Exception e) {
+            throw new Exception("Failed to add text: " + e.getMessage());
+        }
+    }
     public boolean addPageElement(String elementId, String locationX, String locationY, String pageId,String width,String height) throws Exception {
         try {
             PreparedStatement ps = conn.prepareStatement("INSERT INTO pageElements (element_id, page_id, location_X, location_Y,width,height) values(?,?,?,?,?,?);");
