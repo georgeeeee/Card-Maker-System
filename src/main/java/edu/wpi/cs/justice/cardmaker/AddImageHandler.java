@@ -78,7 +78,7 @@ public class AddImageHandler implements RequestStreamHandler {
 
             try {
     			URL url = GeneratePresignedUrl(req.fileName, "justice509");
-                //Text text = AddText(req.text, req.fontName, req.fontSize, req.locationX, req.locationY, req.pageId, req.fontType);
+                
     			httpResponse = new AddImageResponse(url, 200);
             } catch (Exception e) {
             	httpResponse = new AddImageResponse("Unable to add image: " + e.getMessage(), 400);
