@@ -28,9 +28,12 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.google.gson.Gson;
 
+import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import edu.wpi.cs.justice.cardmaker.http.AddImageRequest;
 import edu.wpi.cs.justice.cardmaker.http.AddImageResponse;
 import edu.wpi.cs.justice.cardmaker.http.AddTextRequest;
+import edu.wpi.cs.justice.cardmaker.model.Image;
+import util.Util;
 
 public class AddImageHandler implements RequestStreamHandler {
 	private AmazonS3 s3;
@@ -77,8 +80,13 @@ public class AddImageHandler implements RequestStreamHandler {
 			AddImageRequest req = new Gson().fromJson(body, AddImageRequest.class);
 
             try {
-    			URL url = GeneratePresignedUrl(req.fileName, "justice509");
-                
+				URL url = GeneratePresignedUrl(req.fileName, "justice509");
+				ElementDAO elementDAO = new ElementDAO();
+				String newImgId= util.Util.generateUniqueId();
+				Image newImage = new Image(newImgId, url.toString(), req.locationX, req.locationY, req.width, req.height);
+				elementDAO.addImage(newImage);
+				elementDAO.addPageElement(newImgId, req.locationX, req.locationY, req.pageId, req.width, req.height);
+
     			httpResponse = new AddImageResponse(url, 200);
             } catch (Exception e) {
             	httpResponse = new AddImageResponse("Unable to add image: " + e.getMessage(), 400);
