@@ -43,34 +43,55 @@ public class ElementDAO {
 	}
 
 	public boolean addImage(Image image) throws Exception {
-        try {
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO elements (element_id, type, text, font_name, font_size, font_type, imageUrl) values(?,?,?,?,?,?,?);");
-            ps.setString(1, image.getElementId());
-            ps.setString(2, "image");
-            ps.setString(3, null);
-            ps.setString(4, null);
-            ps.setString(5, null);
-            ps.setString(6, null);
-            ps.setString(7, image.getImageUrl());
-            ps.execute();
-            
-            return true;
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"INSERT INTO elements (element_id, type, text, font_name, font_size, font_type, imageUrl) values(?,?,?,?,?,?,?);");
+			ps.setString(1, image.getElementId());
+			ps.setString(2, "image");
+			ps.setString(3, null);
+			ps.setString(4, null);
+			ps.setString(5, null);
+			ps.setString(6, null);
+			ps.setString(7, image.getImageUrl());
+			ps.execute();
 
-        } catch (Exception e) {
-            throw new Exception("Failed to add image: " + e.getMessage());
-        }
-    }
-    public boolean editImage(Image image) throws Exception{
-        try {
-            PreparedStatement ps = conn.prepareStatement("UPDATE elements set imageUrl=? WHERE element_id = ?");
-            ps.setString(1, image.getImageUrl());
-            ps.setString(2, image.getElementId());
-            ps.execute();
-            return true;
-        } catch (Exception ex) {
-        	throw new Exception("Fail to edit image:" + ex.getMessage());
-        }
-    }
+			return true;
+
+		} catch (Exception e) {
+			throw new Exception("Failed to add image: " + e.getMessage());
+		}
+	}
+
+	public boolean UpdateImageUrl(String imageUrl, String elementId) throws Exception {
+		try {
+			PreparedStatement ps = conn.prepareStatement("UPDATE elements set imageUrl=? WHERE element_id = ?");
+			ps.setString(1, imageUrl);
+			ps.setString(2, elementId);
+			ps.execute();
+			return true;
+		} catch (Exception ex) {
+			throw new Exception("Fail to edit image:" + ex.getMessage());
+		}
+	}
+	
+	public boolean UpdateImage(String elementId, String pageId, String locationX, String locationY, String width, String height) throws Exception {
+		String query = "UPDATE pageElements "
+				+ "SET location_X = ?, location_Y = ?, width = ?, height = ? "
+				+ "WHERE element_id = ? AND page_id = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, locationX);
+			ps.setString(2, locationY);
+			ps.setString(3, width);
+			ps.setString(4, height);
+			ps.setString(5, elementId);
+			ps.setString(6, pageId);
+			ps.execute();
+			return true;
+		} catch (Exception e) {
+			throw new Exception("Failed to update image: " + e.getMessage());
+		}
+	}
 
 	public boolean addPageElement(String elementId, String locationX, String locationY, String pageId, String width,
 			String height) throws Exception {

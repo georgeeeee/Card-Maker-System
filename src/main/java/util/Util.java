@@ -8,6 +8,7 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
 public class Util {
@@ -22,7 +23,7 @@ public class Util {
 	}
 	
 	public static String generateS3BucketUrl(String fileName) {
-		return "https://justice509.s3.amazonaws.com/images/" + fileName;
+		return "https://justice509.s3.amazonaws.com/images/" + fileName + "?versionId=null";
 	}
 	
 	public static URL GeneratePresignedUrl(String objectKey, String bucketName) throws Exception {
@@ -34,7 +35,7 @@ public class Util {
 		// Set the pre-signed URL to expire after one hour.
 		java.util.Date expiration = new java.util.Date();
 		long expTimeMillis = expiration.getTime();
-		expTimeMillis += 1000 * 60 * 60;
+		expTimeMillis += 1000 * 300;
 		expiration.setTime(expTimeMillis);
 
 		// Generate the pre-signed URL.
@@ -48,5 +49,19 @@ public class Util {
 		System.out.println("Pre-Signed URL: " + url.toString());
 
 		return url;
+	}
+	
+	public static boolean DeleteS3File(String bucketName, String objectKey) throws Exception{
+		try {
+			AmazonS3 s3Client = AmazonS3ClientBuilder
+					.standard()
+					//.withCredentials(new ProfileCredentialsProvider())
+					.withRegion(Regions.US_EAST_1).build();
+			
+			s3Client.deleteObject(new DeleteObjectRequest(bucketName, objectKey));
+			return true;
+		} catch (Exception ex) {
+			throw new Exception("Unable to delete file in s3: " + ex.getMessage());
+		} 
 	}
 }

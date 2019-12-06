@@ -7,17 +7,17 @@ public class EditImageRequest {
 	public String locationY;
 	public String width;
 	public String height;
-	public String imgUrl;
+	public String fileName;
 	public String isReplaceImage;
 
 	public EditImageRequest(String width, String height, String locationX, String locationY, String pageId,
-			String imgUrl, String elementId, String isReplaceImage) {
+			String fileName, String elementId, String isReplaceImage) {
 		this.width = width;
 		this.height = height;
 		this.pageId = pageId;
 		this.locationX = locationX;
 		this.locationY = locationY;
-		this.imgUrl = imgUrl;
+		this.fileName = fileName;
 		this.elementId = elementId;
 		this.isReplaceImage = isReplaceImage;
 	}

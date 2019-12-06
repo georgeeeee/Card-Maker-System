@@ -32,6 +32,7 @@ public class CardMakerHandlerTest {
 //        System.out.println(sampleOutputString);
 //        Assert.assertEquals(EXPECTED_OUTPUT_STRING, sampleOutputString);
 //    }
+    
     @Test
 	public void testGeneratePresignedUrl() {
 		try {
@@ -42,4 +43,13 @@ public class CardMakerHandlerTest {
 			System.out.println(e.getMessage());
 		}
 	}
+    
+//    @Test
+//    public void testDeleteFileInS3() {
+//    	try {
+//    		Assert.assertTrue(util.Util.DeleteS3File("justice509", "123.png"));
+//    	} catch (Exception e) {
+//    		System.out.println(e.getMessage());
+//    	}
+//    }
 }

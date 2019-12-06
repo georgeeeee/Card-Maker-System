@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
@@ -18,10 +19,12 @@ import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.CardDAO;
 import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
+import edu.wpi.cs.justice.cardmaker.http.EditImageRequest;
 import edu.wpi.cs.justice.cardmaker.http.EditImageResponse;
 import edu.wpi.cs.justice.cardmaker.http.EditTextRequest;
 import edu.wpi.cs.justice.cardmaker.http.EditTextResponse;
 import edu.wpi.cs.justice.cardmaker.model.Card;
+import edu.wpi.cs.justice.cardmaker.model.Image;
 import edu.wpi.cs.justice.cardmaker.model.Page;
 import edu.wpi.cs.justice.cardmaker.model.Text;
 
@@ -68,19 +71,19 @@ public class EditImageHandler implements RequestStreamHandler{
         }
 
         if (!processed) {
-            EditTextRequest req = new Gson().fromJson(body, EditTextRequest.class);
-
+            EditImageRequest req = new Gson().fromJson(body, EditImageRequest.class);
+            URL presignedUrl = null;
+            
             try {
-                elementDAO.UpdateText(new Text(req.elementId, req.text, req.fontName, req.fontSize, req.fontType, req.locationX, req.locationY), req.pageId);
-                Card card = cardDAO.getCard(cardDAO.getCardId(req.pageId));
-                ArrayList<Page> pages = cardDAO.getPage(card.getCardId());
-                for (Page page : pages){
-                    page.setTexts(elementDAO.getTexts(page.getPageId()));
-                    page.setImages(elementDAO.getImages(page.getPageId()));
-                }
-                card.setPages(pages);
-
-                response = new EditImageResponse(card, 200);
+            	if(Boolean.parseBoolean(req.isReplaceImage)) {
+            		String imageUrl = util.Util.generateS3BucketUrl(req.fileName);
+            		elementDAO.UpdateImageUrl(imageUrl, req.elementId);         		
+            		presignedUrl = util.Util.GeneratePresignedUrl(req.fileName, "justice509");
+            		System.out.println("Presigned url: " + presignedUrl.toString());
+            	}
+            	elementDAO.UpdateImage(req.elementId, req.pageId, req.locationX, req.locationY, req.width, req.height);  	
+            	
+            	response = new EditImageResponse(200, presignedUrl);
             } catch (Exception e) {
                 response = new EditImageResponse("Unable to update image: " + e.getMessage(), 400);
             }
