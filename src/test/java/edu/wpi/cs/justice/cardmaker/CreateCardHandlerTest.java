@@ -25,10 +25,10 @@ public class CreateCardHandlerTest extends LambdaTest {
         handler.handleRequest(input, output, createContext("createCard"));
         
         JsonNode outputNode = Jackson.fromJsonString(output.toString(), JsonNode.class);
-        Assert.assertEquals("200", outputNode.get("statusCode").asText());
+        Assert.assertEquals(200, outputNode.get("statusCode").intValue());
 	}
 
-	void testFailInput(String incoming, String failureCode) throws IOException {
+	void testFailInput(String incoming, int failureCode) throws IOException {
 		CreateCardHandler handler = new CreateCardHandler();
 
         InputStream input = new ByteArrayInputStream(incoming.getBytes());
@@ -37,7 +37,7 @@ public class CreateCardHandlerTest extends LambdaTest {
         handler.handleRequest(input, output, createContext("createCard"));
 
         JsonNode outputNode = Jackson.fromJsonString(output.toString(), JsonNode.class);
-        Assert.assertEquals(failureCode, outputNode.get("statusCode").asText());
+        Assert.assertEquals(failureCode, outputNode.get("statusCode").intValue());
     }
 
 	@Test
@@ -54,7 +54,7 @@ public class CreateCardHandlerTest extends LambdaTest {
 	public void testShouldFail() {
 		String SAMPLE_INPUT_STRING = "{\"eventType\":\"Test Event\",\"recipient\":\"Test Recipient\",\"orientation\":\"GARBAGE\"}";
 		try {
-			testFailInput(SAMPLE_INPUT_STRING, "400");
+			testFailInput(SAMPLE_INPUT_STRING, 400);
 		} catch (IOException ioe) {
 			Assert.fail("Invalid:" + ioe.getMessage());
 		}
