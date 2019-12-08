@@ -54,7 +54,7 @@ public class ShowCardHandler implements RequestStreamHandler{
 			JSONParser parser = new JSONParser();
 			JSONObject event = (JSONObject) parser.parse(reader);
 			logger.log("event:" + event.toJSONString());
-	        
+			
 			body = event.get("pathParameters").toString();
 			if (body == null) {
 				body = event.toJSONString();  // this is only here to make testing easier
