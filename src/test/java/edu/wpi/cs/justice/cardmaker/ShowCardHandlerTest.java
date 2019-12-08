@@ -42,7 +42,7 @@ public class ShowCardHandlerTest extends LambdaTest{
 
 	@Test
 	public void testShouldBeOk() {
-		String SAMPLE_INPUT_STRING = "{\"cardId\":\"xxxxxxxxxxx\"}";
+		String SAMPLE_INPUT_STRING = "{\"cardId\":\"9ab4ed765f494e338df2c076e49f551c\"}";
 		try {
 			testSuccessInput(SAMPLE_INPUT_STRING);
 		} catch (IOException ioe) {
@@ -52,9 +52,9 @@ public class ShowCardHandlerTest extends LambdaTest{
 	
 	@Test
 	public void testShouldFail() {
-		String SAMPLE_INPUT_STRING = "{\"cardId\":\"xxxxxxxxxxx\"}";
+		String SAMPLE_INPUT_STRING = "{\"cardId\":\"GARBAGE\"}";
 		try {
-			testSuccessInput(SAMPLE_INPUT_STRING);
+			testFailInput(SAMPLE_INPUT_STRING, 400);
 		} catch (IOException ioe) {
 			Assert.fail("Invalid:" + ioe.getMessage());
 		}
