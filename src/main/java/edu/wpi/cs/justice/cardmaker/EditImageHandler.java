@@ -6,10 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -19,34 +17,27 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
+import edu.wpi.cs.justice.cardmaker.db.CardDAO;
 import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
-import edu.wpi.cs.justice.cardmaker.http.AddTextRequest;
-import edu.wpi.cs.justice.cardmaker.http.AddTextResponse;
+import edu.wpi.cs.justice.cardmaker.http.EditImageRequest;
+import edu.wpi.cs.justice.cardmaker.http.EditImageResponse;
+import edu.wpi.cs.justice.cardmaker.http.EditTextRequest;
+import edu.wpi.cs.justice.cardmaker.http.EditTextResponse;
+import edu.wpi.cs.justice.cardmaker.model.Card;
+import edu.wpi.cs.justice.cardmaker.model.Image;
+import edu.wpi.cs.justice.cardmaker.model.Page;
 import edu.wpi.cs.justice.cardmaker.model.Text;
-import util.Util;
 
-public class AddTextHandler implements RequestStreamHandler {
-    LambdaLogger logger;
+public class EditImageHandler implements RequestStreamHandler{
+	LambdaLogger logger;
+    ElementDAO elementDAO;
+    CardDAO cardDAO;
 
-    Text AddText(String textString, String fontName, String fontSize, String locationX, String locationY, String pageId, String fontType) throws Exception {
-        if (logger != null) {
-            logger.log("in addText");
-        }
-        ElementDAO dao = new ElementDAO();
-
-        final String elementId = Util.generateUniqueId();
-        Text text = new Text(elementId, textString, fontName, fontSize, fontType, locationX, locationY);
-        if (dao.addText(text)) {
-            if (dao.addPageElement(text.getElementId(), locationX, locationY, pageId,null,null)) {
-                return text;
-            }
-        }
-        return text;
-    }
-
-    @Override
-    public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
-        logger = context.getLogger();
+	@Override
+	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
+		logger = context.getLogger();
+        elementDAO = new ElementDAO();
+        cardDAO = new CardDAO();
 
         // set up response
         JSONObject headerJson = new JSONObject();
@@ -57,9 +48,8 @@ public class AddTextHandler implements RequestStreamHandler {
         JSONObject responseJson = new JSONObject();
         responseJson.put("headers", headerJson);
 
-        AddTextResponse response = null;
-
-        // extract body from incoming HTTP POST request. If any error, then return 422 error
+        EditImageResponse response = null;
+        
         String body;
         boolean processed = false;
         try {
@@ -74,20 +64,28 @@ public class AddTextHandler implements RequestStreamHandler {
             }
         } catch (org.json.simple.parser.ParseException pe) {
             logger.log(pe.toString());
-            response = new AddTextResponse(pe.getMessage(), 400);  // unable to process input
+            response = new EditImageResponse(pe.getMessage(), 400);  // unable to process input
             responseJson.put("body", new Gson().toJson(response));
             processed = true;
             body = null;
         }
 
         if (!processed) {
-            AddTextRequest req = new Gson().fromJson(body, AddTextRequest.class);
-
+            EditImageRequest req = new Gson().fromJson(body, EditImageRequest.class);
+            URL presignedUrl = null;
+            
             try {
-                Text text = AddText(req.text, req.fontName, req.fontSize, req.locationX, req.locationY, req.pageId, req.fontType);
-                response = new AddTextResponse(text, 200);
+            	if(Boolean.parseBoolean(req.isReplaceImage)) {
+            		String imageUrl = util.Util.generateS3BucketUrl(req.fileName);
+            		elementDAO.UpdateImageUrl(imageUrl, req.elementId);         		
+            		presignedUrl = util.Util.GeneratePresignedUrl(req.fileName, "justice509");
+            		System.out.println("Presigned url: " + presignedUrl.toString());
+            	}
+            	elementDAO.UpdateImage(req.elementId, req.pageId, req.locationX, req.locationY, req.width, req.height);  	
+            	
+            	response = new EditImageResponse(200, presignedUrl);
             } catch (Exception e) {
-                response = new AddTextResponse("Unable to add text: " + e.getMessage(), 400);
+                response = new EditImageResponse("Unable to update image: " + e.getMessage(), 400);
             }
         }
 
@@ -97,6 +95,6 @@ public class AddTextHandler implements RequestStreamHandler {
         logger.log(responseJson.toJSONString());
         OutputStreamWriter writer = new OutputStreamWriter(output, "UTF-8");
         writer.write(responseJson.toJSONString());
-        writer.close();
-    }
+        writer.close();	
+	}	
 }
