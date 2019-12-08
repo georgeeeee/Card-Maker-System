@@ -100,8 +100,12 @@ public class CreateCardHandler implements RequestStreamHandler {
 			try {
 				Card card = createCard(req.eventType, req.recipient, req.orientation);
 				if (card != null) {
-					addPageRequest(card);
-					response = new CreateCardResponse(card, 200);
+					if (req.orientation.equals("Portrait") || req.orientation.equals("Landscape")) {
+						addPageRequest(card);
+						response = new CreateCardResponse(card, 200);
+					} else {
+						response = new CreateCardResponse("Unable to create card: Invalid Orientation!", 400);
+					}
 				} else {
 //					response = new CreateCardResponse("", );
 				}
