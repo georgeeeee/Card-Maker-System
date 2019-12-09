@@ -32,6 +32,7 @@ import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import edu.wpi.cs.justice.cardmaker.http.AddImageRequest;
 import edu.wpi.cs.justice.cardmaker.http.AddImageResponse;
 import edu.wpi.cs.justice.cardmaker.http.AddTextRequest;
+import edu.wpi.cs.justice.cardmaker.http.AddTextResponse;
 import edu.wpi.cs.justice.cardmaker.model.Image;
 import util.Util;
 
@@ -80,14 +81,20 @@ public class AddImageHandler implements RequestStreamHandler {
 			AddImageRequest req = new Gson().fromJson(body, AddImageRequest.class);
 
             try {
-				URL url = util.Util.GeneratePresignedUrl(req.fileName, "justice509");
-				ElementDAO elementDAO = new ElementDAO();
-				String newImgId= util.Util.generateUniqueId();
-				Image newImage = new Image(newImgId, util.Util.generateS3BucketUrl(req.fileName), req.locationX, req.locationY, req.width, req.height);
-				elementDAO.addImage(newImage);
-				elementDAO.addPageElement(newImgId, req.locationX, req.locationY, req.pageId, req.width, req.height);
-
-    			httpResponse = new AddImageResponse(url, 200);
+            	if ((Integer.valueOf(req.locationX) < 0) || (Integer.valueOf(req.locationY) < 0)) {
+            		httpResponse = new AddImageResponse("Unable to add text: Invalid location values!", 400);
+            	} else if ((Integer.valueOf(req.width) < 0) || (Integer.valueOf(req.height) < 0)) {
+            		httpResponse = new AddImageResponse("Unable to add text: Invalid dimension values!", 400);
+            	} else {
+					URL url = util.Util.GeneratePresignedUrl(req.fileName, "justice509");
+					ElementDAO elementDAO = new ElementDAO();
+					String newImgId= util.Util.generateUniqueId();
+					Image newImage = new Image(newImgId, util.Util.generateS3BucketUrl(req.fileName), req.locationX, req.locationY, req.width, req.height);
+					elementDAO.addImage(newImage);
+					elementDAO.addPageElement(newImgId, req.locationX, req.locationY, req.pageId, req.width, req.height);
+	
+	    			httpResponse = new AddImageResponse(url, 200);
+            	}
             } catch (Exception e) {
             	httpResponse = new AddImageResponse("Unable to add image: " + e.getMessage(), 400);
             }

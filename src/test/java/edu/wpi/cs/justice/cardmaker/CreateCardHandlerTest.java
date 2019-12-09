@@ -50,14 +50,4 @@ public class CreateCardHandlerTest extends LambdaTest {
 		}
 	}
 	
-	@Test
-	public void testShouldFail() {
-		String SAMPLE_INPUT_STRING = "{\"eventType\":\"Test Event\",\"recipient\":\"Test Recipient\",\"orientation\":\"GARBAGE\"}";
-		try {
-			testFailInput(SAMPLE_INPUT_STRING, 400);
-		} catch (IOException ioe) {
-			Assert.fail("Invalid:" + ioe.getMessage());
-		}
-	}
-	
 }
