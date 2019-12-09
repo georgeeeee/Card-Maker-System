@@ -16,18 +16,19 @@ import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.http.*;
 
-public class DeleteTextHandlerTest extends LambdaTest {
+public class EditTextHandlerTest extends LambdaTest{
 
 	@Test
-	public void testAddAndDeleteText() throws IOException {
+	public void testAddAndEditText() throws IOException {
+		// Create Card
 		// Add Text to Page
-		String testText = "TEST";
+		String testText = "TEST2";
 		String testFontName = "Arial";
 		String testFontType = "Bold";
 		String testFontSize = String.valueOf(new Random().nextInt(50));
 		String testLocationX = String.valueOf(new Random().nextInt(100));
 		String testLocationY = String.valueOf(new Random().nextInt(100));
-		String testPageId = "0b95bc128d2a4dbbbd6597337870290a"; // Inner Left Page of TESTING CARD
+		String testPageId = "bd86d01aab2a4f889cf76dda7c0c3c0c"; // Inner Right Page of TESTING CARD
 		AddTextRequest atr = new AddTextRequest(testText, testFontName, testFontType, testLocationX, testLocationY, testPageId, testFontSize);
 		
 		String atRequest = new Gson().toJson(atr);
@@ -51,30 +52,20 @@ public class DeleteTextHandlerTest extends LambdaTest {
         
         String testElementId = resp.text.getElementId();
         
-        // Delete Text
-        DeleteTextRequest dtr = new DeleteTextRequest(testPageId, testElementId);
+        // Edit Text
+        EditTextRequest etr = new EditTextRequest(testFontName, testFontType, testFontSize, testLocationX, testLocationY, testPageId, testElementId, "TEST2EDIT");
         
-        atRequest = new Gson().toJson(dtr);
+        atRequest = new Gson().toJson(etr);
         jsonRequest = new Gson().toJson(new PostRequest(atRequest));
         
         input = new ByteArrayInputStream(jsonRequest.getBytes());
         output = new ByteArrayOutputStream();
         
-        new DeleteTextHandler().handleRequest(input, output, createContext("deleteText"));
+        new EditTextHandler().handleRequest(input, output, createContext("editText"));
         
         post = new Gson().fromJson(output.toString(), PostResponse.class);
-        DeleteTextResponse d_resp = new Gson().fromJson(post.body, DeleteTextResponse.class);
-        Assert.assertEquals(200, d_resp.statusCode);
-        
-        // Try deleting again, should fail
-        input = new ByteArrayInputStream(jsonRequest.getBytes());
-        output = new ByteArrayOutputStream();
-        
-        new DeleteTextHandler().handleRequest(input, output, createContext("deleteText"));
-        
-        post = new Gson().fromJson(output.toString(), PostResponse.class);
-        d_resp = new Gson().fromJson(post.body, DeleteTextResponse.class);
-        Assert.assertEquals(400, d_resp.statusCode);
+        EditTextResponse e_resp = new Gson().fromJson(post.body, EditTextResponse.class);
+        Assert.assertEquals(200, e_resp.statusCode);
 	}
-
+	
 }

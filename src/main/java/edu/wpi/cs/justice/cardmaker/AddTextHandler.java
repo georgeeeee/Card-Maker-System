@@ -84,8 +84,15 @@ public class AddTextHandler implements RequestStreamHandler {
             AddTextRequest req = new Gson().fromJson(body, AddTextRequest.class);
 
             try {
-                Text text = AddText(req.text, req.fontName, req.fontSize, req.locationX, req.locationY, req.pageId, req.fontType);
-                response = new AddTextResponse(text, 200);
+            	// Ensuring location is valid
+            	if ((Integer.valueOf(req.locationX) < 0) || (Integer.valueOf(req.locationY) < 0)) {
+            		response = new AddTextResponse("Unable to add text: Invalid location values!", 400);
+            	} else if (Integer.valueOf(req.fontSize) <= 0) {
+            		response = new AddTextResponse("Unable to add text: Invalid font size values!", 400);
+            	} else {
+	                Text text = AddText(req.text, req.fontName, req.fontSize, req.locationX, req.locationY, req.pageId, req.fontType);
+	                response = new AddTextResponse(text, 200);
+            	}
             } catch (Exception e) {
                 response = new AddTextResponse("Unable to add text: " + e.getMessage(), 400);
             }
