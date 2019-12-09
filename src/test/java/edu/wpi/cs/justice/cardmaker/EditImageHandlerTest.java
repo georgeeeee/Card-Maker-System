@@ -29,7 +29,7 @@ public class EditImageHandlerTest extends LambdaTest{
 		String testPageId = "bd86d01aab2a4f889cf76dda7c0c3c0c"; // Inner Right Page of TESTING CARD
 		String testElementId = "dd76607b63804d5897aa81d9cfe0f506";
 
-        EditImageRequest etr = new EditImageRequest(testWidth, testHeight, testPageId, testLocationX, testLocationY, testImage, testElementId, "true");
+        EditImageRequest etr = new EditImageRequest(testWidth, testHeight, testLocationX, testLocationY, testPageId, testImage, testElementId, "true");
         
         String eiRequest = new Gson().toJson(etr);
         String jsonRequest = new Gson().toJson(new PostRequest(eiRequest));
