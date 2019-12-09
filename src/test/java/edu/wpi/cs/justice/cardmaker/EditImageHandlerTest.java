@@ -44,7 +44,7 @@ public class EditImageHandlerTest extends LambdaTest{
         Assert.assertEquals(200, e_resp.statusCode);
         
         // Now edit existing image without changing image name
-        etr = new EditImageRequest(testWidth, testHeight, testPageId, testLocationX, testLocationY, "test1.png", testElementId, "false");
+        etr = new EditImageRequest(testWidth, testHeight, testLocationX, testLocationY, testPageId, "test1.png", testElementId, "false");
         
         eiRequest = new Gson().toJson(etr);
         jsonRequest = new Gson().toJson(new PostRequest(eiRequest));
