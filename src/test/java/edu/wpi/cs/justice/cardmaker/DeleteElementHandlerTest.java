@@ -76,5 +76,4 @@ public class DeleteElementHandlerTest extends LambdaTest {
         d_resp = new Gson().fromJson(post.body, DeleteElementResponse.class);
         Assert.assertEquals(400, d_resp.statusCode);
 	}
-
 }
