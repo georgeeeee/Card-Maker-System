@@ -184,7 +184,7 @@ public class CardDAO {
         return new Text(elementId,text,fontName,fontSize,fontType,locationX,locationY);
     }
 
-	public Card duplicateCard(String cardId) throws Exception {
+	public Card duplicateCard(String cardId, String recipientName) throws Exception {
 		try {
             Card card = getCard(cardId) ;
             String newcardId = util.Util.generateUniqueId();
@@ -193,7 +193,7 @@ public class CardDAO {
                 "INSERT INTO cards (card_id, event_type, recipient, orientation) values(?,?,?,?);");
             ps.setString(1, newcardId);
             ps.setString(2, card.getEventType());
-            ps.setString(3, card.getRecipient());
+            ps.setString(3, recipientName);
             ps.setString(4, card.getOrientation());
 
             ps.execute();

@@ -30,13 +30,13 @@ import util.Util;
 public class DuplicateCardHandler implements RequestStreamHandler {
 	LambdaLogger logger;
 	
-	Card duplicateCard(String cardId) throws Exception {
+	Card duplicateCard(String cardId, String recipientName) throws Exception {
         try {
             if (logger != null) { logger.log("!duplicateCard"); }
         CardDAO cardDAO = new CardDAO();
         ElementDAO elementDAO =new ElementDAO();
 
-        Card duplicateCard = cardDAO.duplicateCard(cardId);
+        Card duplicateCard = cardDAO.duplicateCard(cardId,recipientName);
         ArrayList<Page>originPage = cardDAO.getPage(cardId);
         for (Page page : originPage){
             page.setTexts(elementDAO.getTexts(page.getPageId()));
@@ -92,7 +92,7 @@ public class DuplicateCardHandler implements RequestStreamHandler {
 			DuplicateCardRequest req = new Gson().fromJson(body, DuplicateCardRequest.class);
 			
 			try {
-				Card card = duplicateCard(req.cardId);
+				Card card = duplicateCard(req.cardId,req.recipientName);
 				if (card != null) {
 					response = new DuplicateCardResponse(card, 200);
 				} else {
