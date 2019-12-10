@@ -26,7 +26,7 @@ public class EditImageHandlerTest extends LambdaTest{
 		String testLocationY = String.valueOf(new Random().nextInt(100));
 		String testWidth = String.valueOf(new Random().nextInt(50));
 		String testHeight = String.valueOf(new Random().nextInt(50));
-		String testPageId = "bd86d01aab2a4f889cf76dda7c0c3c0c"; // Inner Right Page of TESTING CARD
+		String testPageId = "a11fb66aad844c3b84c278e4d064e37c"; // Inner Right Page of TESTING CARD
 		String testElementId = "dd76607b63804d5897aa81d9cfe0f506";
 
         EditImageRequest etr = new EditImageRequest(testWidth, testHeight, testLocationX, testLocationY, testPageId, testImage, testElementId, "true");

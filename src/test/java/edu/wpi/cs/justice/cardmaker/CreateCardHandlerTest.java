@@ -28,18 +28,6 @@ public class CreateCardHandlerTest extends LambdaTest {
         Assert.assertEquals(200, outputNode.get("statusCode").intValue());
 	}
 
-	void testFailInput(String incoming, int failureCode) throws IOException {
-		CreateCardHandler handler = new CreateCardHandler();
-
-        InputStream input = new ByteArrayInputStream(incoming.getBytes());
-        OutputStream output = new ByteArrayOutputStream();
-
-        handler.handleRequest(input, output, createContext("createCard"));
-
-        JsonNode outputNode = Jackson.fromJsonString(output.toString(), JsonNode.class);
-        Assert.assertEquals(failureCode, outputNode.get("statusCode").intValue());
-    }
-
 	@Test
 	public void testShouldBeOk() {
 		String SAMPLE_INPUT_STRING = "{\"eventType\":\"Test Event\",\"recipient\":\"Test Recipient\",\"orientation\":\"Portrait\"}";

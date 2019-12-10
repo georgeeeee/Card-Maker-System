@@ -27,7 +27,7 @@ public class DeleteTextHandlerTest extends LambdaTest {
 		String testFontSize = String.valueOf(new Random().nextInt(50));
 		String testLocationX = String.valueOf(new Random().nextInt(100));
 		String testLocationY = String.valueOf(new Random().nextInt(100));
-		String testPageId = "0b95bc128d2a4dbbbd6597337870290a"; // Inner Left Page of TESTING CARD
+		String testPageId = "d6092039650947139d2676caa9e3879a"; // Inner Left Page of TESTING CARD
 		AddTextRequest atr = new AddTextRequest(testText, testFontName, testFontType, testLocationX, testLocationY, testPageId, testFontSize);
 		
 		String atRequest = new Gson().toJson(atr);
