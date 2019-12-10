@@ -264,9 +264,9 @@ public class ElementDAO {
 					.prepareStatement("DELETE FROM pageElements WHERE element_id = ? AND page_id = ?;");
 			ps.setString(1, elementId);
 			ps.setString(2, pageId);
-			//int numAffected = ps.executeUpdate();
+			int numAffect = ps.executeUpdate();
 			ps.close();
-			return true;
+			return (numAffect == 1);
 		} catch (Exception e) {
 			throw new Exception("Failed to delete text: " + e.getMessage());
 		}
@@ -276,9 +276,9 @@ public class ElementDAO {
 			PreparedStatement ps = conn
 					.prepareStatement("DELETE FROM elements WHERE element_id = ?;");
 			ps.setString(1, elementId);
-			//int numAffected = ps.executeUpdate();
+			int numAffect = ps.executeUpdate();
 			ps.close();
-			return true;
+			return (numAffect == 1);
 		} catch (Exception e) {
 			throw new Exception("Failed to delete text: " + e.getMessage());
 		}
