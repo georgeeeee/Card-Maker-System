@@ -1,0 +1,400 @@
+<html>
+<style>
+body {font-family: Arial;}
+
+.hide {
+    display: none;
+}
+
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: block;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+</style>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript">
+        var api_url = "https://7r137dq2d5.execute-api.us-east-1.amazonaws.com/testApp2";
+
+        const create_url = api_url + "/card";
+        const list_url = api_url + "/cards" ;
+
+        var cardList = null;
+        var currentPage = null;
+        var currentCard = null;
+        var pages = null;
+
+        function processCreateCardResponse(response) {
+            var response = JSON.parse(response);
+            window.location.reload(true);
+        }
+
+        function showCard(response) {
+            var response = JSON.parse(response);
+            var cards = response.cardsList;
+            cardList = cards;
+
+            cardlistContainer = document.getElementById('loadCardList');
+            var length = cardlistContainer.options.length;
+            for (i = 0; i < length; i++) {
+                cardlistContainer.options[i] = null;
+            }
+            cardlistContainer.length = 0;
+
+            for (var i in cards) {
+                var option = document.createElement("option");
+                option.value = cards[i].cardId;
+                option.text = cards[i].recipient + '_' + cards[i].eventType + '_' + cards[i].orientation;
+                cardlistContainer.add(option);
+            }
+        }
+
+        function createCard(e) {
+            var form = document.createCardForm;
+            var eventType = form.eventType.value;
+            var recipient = form.recipient.value;
+            var orientation = form.orientation.value;
+
+            if(!eventType && !recipient && !orientation) {
+                return;
+            }
+
+            var data = {};
+            data["eventType"] = eventType;
+            data["recipient"] = recipient;
+            data["orientation"] = orientation;
+
+            var js = JSON.stringify(data);
+            console.log("JS:" + js);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", create_url, true);
+
+            // send the collected data as JSON
+            xhr.send(js);
+
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                console.log(xhr);
+                console.log(xhr.request);
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                    console.log ("XHR:" + xhr.responseText);
+                    processCreateCardResponse(xhr.responseText);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                    processCreateCardResponse(null);
+                }
+            };
+        }
+
+        function listAllCard() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", list_url);
+            xhr.send();
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        showCard(xhr.responseText);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+        }
+
+        function deleteCard(e) {
+            var cardListContainer = document.getElementById('loadCardList');
+            var cardId = cardListContainer.options[cardListContainer.selectedIndex].value;
+
+            const delete_url = api_url + "/card/" + cardId + "/delete"; 
+            var data = {};
+            data["cardId"] = cardId;
+
+            var data = JSON.stringify(data);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", delete_url);
+            xhr.send(data);
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        window.location.reload(true)
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+        }
+
+        function showPage(response) {
+            var response = JSON.parse(response);
+            currentCard = response.card;
+            pages = response.card.pages;
+
+            var cardViewContainer = document.getElementById("CardViewContainer");
+            cardViewContainer.style.display = 'block';
+
+            document.getElementById('front').click();
+        }
+
+        function loadElements(page) {
+            elementlistContainer = document.getElementById('elementList');
+            var length = elementlistContainer.options.length;
+            for (i = 0; i < length; i++) {
+                elementlistContainer.options[i] = null;
+            }
+
+            elementlistContainer.length = 0;
+            canvas = document.getElementById('card-canvas');
+            if(currentCard.orientation.toLowerCase() == 'portrait') {
+                canvas.width = 300;
+                canvas.height = 400;
+            } else {
+                canvas.width = 400;
+                canvas.height = 300;
+            }
+            var context = canvas.getContext('2d');
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            var texts = page.texts;
+            for (var i in texts) {
+                context.font = texts[i].fontType + ' ' + texts[i].fontSize + 'px ' + texts[i].fontName;
+                context.fillText(texts[i].text, texts[i].locationX, texts[i].locationY);
+
+                var option = document.createElement("option");
+                option.value = texts[i].elementId;
+                option.text = texts[i].text + '_' + texts[i].fontName + '_' + texts[i].fontType + '_' + texts[i].fontSize;
+                elementlistContainer.add(option);
+            }
+        }
+
+        function viewCard(e) {
+            var cardListContainer = document.getElementById('loadCardList');
+            var cardId = cardListContainer.options[cardListContainer.selectedIndex].value;
+
+            const view_card_url = api_url + '/card/' + cardId + '/pages';
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", view_card_url);
+            xhr.send();
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        showPage(xhr.responseText);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+        }
+
+        function loadPage(evt, pageName) {
+            var page = pages.find(x => x.name === pageName);
+            currentPage = page;
+            var i, tabcontent, tablinks;
+            //document.getElementById("pageName").innerHTML = pageName;
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            evt.currentTarget.className += " active";
+
+            loadElements(page);
+        }
+
+        function addText(event) {
+            var add_text_url = api_url + '/page/' + currentPage.pageId + '/text';
+
+            var textContent = document.getElementById('textContent').value;
+            var textFont = document.getElementById('textFont').value;
+            var textType = document.getElementById('textType').value;
+            var textSize = document.getElementById('textSize').value;
+            var textLocationX = document.getElementById('textLocationX').value;
+            var textLocationY = document.getElementById('textLocationY').value;
+
+            if(!textContent && !textFont && !textType && !textLocationX && !textLocationY && !textSize) {
+                return;
+            }
+            
+            var data = {};
+            data["pageId"] = currentPage.pageId;
+            data["text"] = textContent;
+            data["fontName"] = textFont;
+            data["fontType"] = textType;
+            data["fontSize"] = textSize;
+            data["locationX"] = textLocationX;
+            data["locationY"] = textLocationY;
+
+            var js = JSON.stringify(data);
+            console.log('JS: '+ js );
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", add_text_url, true);
+
+            // send the collected data as JSON
+            xhr.send(js);
+
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                console.log(xhr);
+                console.log(xhr.request);
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                    console.log ("XHR:" + xhr.responseText);
+                    viewCard(event);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                    
+                }
+            };
+        }
+
+        function deleteElement(event) {
+            var elementListContainer = document.getElementById('elementList');
+            var elementId = elementListContainer.options[elementListContainer.selectedIndex].value;
+            var pageId = currentPage.pageId
+
+            const delete_element_url = api_url + "/page/" + pageId + "/element/" + elementId; 
+            var data = {};
+            data["pageId"] = pageId;
+            data["elementId"] = elementId;
+
+            var data = JSON.stringify(data);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", delete_element_url);
+            xhr.send(data);
+            // This will process results and update HTML as appropriate. 
+            xhr.onloadend = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    if (xhr.status == 200) {
+                        viewCard(event);
+                    } else if (xhr.status == 400) {
+                        alert ("unable to process request");
+                    }
+                } else {
+                }
+            };
+
+        }
+
+    </script>
+</head>
+
+<body onload="listAllCard()">
+    <h1 style="position: relative; left: 45%;">Card Maker</h1>
+
+    <div class="left" style="position: absolute; left: 10%;">
+        <div>
+            <h2>List of Cards</h2> 
+            <div>
+                <select id="loadCardList" style="width:400px;height:300px;font-size:20px;" size="10">
+                </select>
+                <br>
+                <button type="button" id="listBtn" style="width:196px;font-size:15px;padding:3px;" name="listBtn" onClick="JavaScript:viewCard(this)">View Card</button>
+                <button type="button" id="deleteBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteBtn" onClick="JavaScript:deleteCard(this)">Delete Selected Card</button>
+            </div>
+        </div>
+
+        <div id="createCard">
+            <h2>Create a card</h2>
+            <form name="createCardForm" method="post" name="createCard">
+                Event Type: <input name="eventType" value="" />
+                <br>
+                Recipient: <input name="recipient" value=""/>
+                <br>
+                Orientation: 
+                <select name="orientation">
+                    <option>Landscape</option>
+                    <option>Portrait</option>
+                </select>
+                <br>
+                <input type="button" value="Create"  onClick="JavaScript:createCard(this)">
+            </form>
+        </div>
+    </div>
+
+    <div id="CardViewContainer" class="hide" style="position: absolute; right: 10%;">
+        <div class="tab">
+            <button class="tablinks" id="front" onclick="loadPage(event, 'front')">Front Page</button>
+            <button class="tablinks" id="innerLeft" onclick="loadPage(event, 'innerLeft')">Inner Left Page</button>
+            <button class="tablinks" id="innerRight" onclick="loadPage(event, 'innerRight')">Inner Right Page</button>
+            </div>
+
+            <div class="tabcontent">
+                <div id="viewPage">
+                    <canvas id="card-canvas" width="400" height="300" style="border:1px solid #000000;"></canvas>
+                    <select id="elementList" style="overflow:auto;display:block;width:400px;height:100px;font-size:16px;margin-top:10px" size="10">
+                        <option>Please load from Database</option>
+                    </select>
+                    <br>
+                    <button type="button" id="deleteElemBtn" style="width:196px;font-size:15px;padding:3px;" name="deleteElemBtn" onClick="JavaScript:deleteElement(this)">Delete Selected Element</button>
+                </div>
+                <div id="addElem">
+                    <h2>Add a new Element:</h2>
+
+                    <h3>Add a Text:</h3>
+                    <form name="addTextForm" method="post" name="addText">
+                        Text Content: <input id="textContent" type="text" name="textContent" value="" />
+                        <br>
+                        Text Font: <input id="textFont" type="text" name="textFont" value=""/>
+                        <br>
+                        Text Type: <input id="textType" type="text" name="textType" value=""/>
+                        <br>
+                        Text Size: <input id="textSize" type="number" name="textSize" value=""/>
+                        <br>
+                        Position:
+                        <br>
+                        x: <input id="textLocationX" type="number" name="textLocationX" style="width: 50px" value=""/>,
+                        y: <input id="textLocationY" type="number" name="textLocationY" style="width: 50px" value=""/>
+                        <br>
+                        <input type="button" value="Add Text"  onClick="JavaScript:addText(this)">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
