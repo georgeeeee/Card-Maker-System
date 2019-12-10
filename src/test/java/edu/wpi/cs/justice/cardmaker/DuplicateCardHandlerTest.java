@@ -40,7 +40,7 @@ public class DuplicateCardHandlerTest extends LambdaTest{
         String cardId = resp.card.getCardId();
         
         // Duplicate Card
-        DuplicateCardRequest dcr = new DuplicateCardRequest(cardId);
+        DuplicateCardRequest dcr = new DuplicateCardRequest(cardId, recipient);
         
         ccRequest = new Gson().toJson(dcr);
         jsonRequest = new Gson().toJson(new PostRequest(ccRequest));
