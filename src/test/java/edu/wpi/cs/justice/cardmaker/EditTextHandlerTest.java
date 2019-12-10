@@ -28,7 +28,7 @@ public class EditTextHandlerTest extends LambdaTest{
 		String testFontSize = String.valueOf(new Random().nextInt(50));
 		String testLocationX = String.valueOf(new Random().nextInt(100));
 		String testLocationY = String.valueOf(new Random().nextInt(100));
-		String testPageId = "bd86d01aab2a4f889cf76dda7c0c3c0c"; // Inner Right Page of TESTING CARD
+		String testPageId = "a11fb66aad844c3b84c278e4d064e37c"; // Inner Right Page of TESTING CARD
 		AddTextRequest atr = new AddTextRequest(testText, testFontName, testFontType, testLocationX, testLocationY, testPageId, testFontSize);
 		
 		String atRequest = new Gson().toJson(atr);

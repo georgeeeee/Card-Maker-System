@@ -14,7 +14,7 @@ import org.junit.Test;
 import com.amazonaws.util.json.Jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class AddImageHandlerTeset extends LambdaTest{
+public class AddImageHandlerTest extends LambdaTest{
 
 	void testSuccessInput(String incoming) throws IOException {
 		AddImageHandler handler = new AddImageHandler();

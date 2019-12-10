@@ -42,7 +42,7 @@ public class ShowCardHandlerTest extends LambdaTest{
 
 	@Test
 	public void testShouldBeOk() {
-		String SAMPLE_INPUT_STRING = "{\"cardId\":\"9ab4ed765f494e338df2c076e49f551c\"}";
+		String SAMPLE_INPUT_STRING = "{\"cardId\":\"b1b04b7ad5c4413ca0445dc7ee40830b\"}";
 		try {
 			testSuccessInput(SAMPLE_INPUT_STRING);
 		} catch (IOException ioe) {
