@@ -56,6 +56,7 @@ public class EditImageHandler implements RequestStreamHandler{
             if (body == null) {
                 body = event.toJSONString();  // this is only here to make testing easier
             }
+            logger.log("body:" + body);
         } catch (org.json.simple.parser.ParseException pe) {
             logger.log(pe.toString());
             response = new EditImageResponse(pe.getMessage(), 400);  // unable to process input

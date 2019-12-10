@@ -36,6 +36,15 @@ import edu.wpi.cs.justice.cardmaker.http.AddTextResponse;
 import edu.wpi.cs.justice.cardmaker.model.Image;
 import util.Util;
 
+/**
+ * @author justice509
+ * This is a handler for adding images
+ * To upload the images
+ * I)   handler receives image info from front-end
+ * II)  generate and an ad-hoc url by image file name
+ * III) return it to front-end
+ * IV)  front end upload the image file 
+ */
 public class AddImageHandler implements RequestStreamHandler {
 	private AmazonS3 s3;
 	LambdaLogger logger;
@@ -81,11 +90,13 @@ public class AddImageHandler implements RequestStreamHandler {
 			AddImageRequest req = new Gson().fromJson(body, AddImageRequest.class);
 
             try {
+            	//check whether the value of dimension and size are valid
             	if ((Integer.valueOf(req.locationX) < 0) || (Integer.valueOf(req.locationY) < 0)) {
             		httpResponse = new AddImageResponse("Unable to add text: Invalid location values!", 400);
             	} else if ((Integer.valueOf(req.width) < 0) || (Integer.valueOf(req.height) < 0)) {
             		httpResponse = new AddImageResponse("Unable to add text: Invalid dimension values!", 400);
             	} else {
+            		
 					URL url = util.Util.GeneratePresignedUrl("images/" + req.fileName, "justice509");
 					ElementDAO elementDAO = new ElementDAO();
 					String newImgId= util.Util.generateUniqueId();
