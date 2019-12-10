@@ -21,15 +21,15 @@ public class EditImageHandlerTest extends LambdaTest{
 	@Test
 	public void testEditImage() throws IOException {
 		// Edit existing image with changing image name
-		String testImage = "1234.png"; // Original image: test1.png
+		String testImage = "above-adventure-aerial-air.jpg"; // Original image: test1.png
 		String testLocationX = String.valueOf(new Random().nextInt(100));
 		String testLocationY = String.valueOf(new Random().nextInt(100));
 		String testWidth = String.valueOf(new Random().nextInt(50));
 		String testHeight = String.valueOf(new Random().nextInt(50));
-		String testPageId = "a11fb66aad844c3b84c278e4d064e37c"; // Inner Right Page of TESTING CARD
-		String testElementId = "dd76607b63804d5897aa81d9cfe0f506";
+		String testPageId = "95a59be3985f4055ad3a5f2a0184a236"; // Inner Right Page of TESTING CARD
+		String testElementId = "57d462cb5b4b4ac598ee887557816b9a";
 
-        EditImageRequest etr = new EditImageRequest(testWidth, testHeight, testLocationX, testLocationY, testPageId, testImage, testElementId, "true");
+        EditImageRequest etr = new EditImageRequest(testWidth, testHeight, testLocationX, testLocationY, testPageId, testImage, testElementId, "false");
         
         String eiRequest = new Gson().toJson(etr);
         String jsonRequest = new Gson().toJson(new PostRequest(eiRequest));
