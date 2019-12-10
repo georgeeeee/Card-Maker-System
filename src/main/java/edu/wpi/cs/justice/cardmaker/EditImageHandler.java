@@ -21,12 +21,6 @@ import edu.wpi.cs.justice.cardmaker.db.CardDAO;
 import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import edu.wpi.cs.justice.cardmaker.http.EditImageRequest;
 import edu.wpi.cs.justice.cardmaker.http.EditImageResponse;
-import edu.wpi.cs.justice.cardmaker.http.EditTextRequest;
-import edu.wpi.cs.justice.cardmaker.http.EditTextResponse;
-import edu.wpi.cs.justice.cardmaker.model.Card;
-import edu.wpi.cs.justice.cardmaker.model.Image;
-import edu.wpi.cs.justice.cardmaker.model.Page;
-import edu.wpi.cs.justice.cardmaker.model.Text;
 
 public class EditImageHandler implements RequestStreamHandler{
 	LambdaLogger logger;

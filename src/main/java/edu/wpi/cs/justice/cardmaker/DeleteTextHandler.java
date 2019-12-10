@@ -18,8 +18,8 @@ import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 
-import edu.wpi.cs.justice.cardmaker.http.DeleteCardResponse;
 import edu.wpi.cs.justice.cardmaker.http.DeleteTextRequest;
+import edu.wpi.cs.justice.cardmaker.http.DeleteTextResponse;
 
 public class DeleteTextHandler implements RequestStreamHandler {
 	public LambdaLogger logger = null;
@@ -37,7 +37,7 @@ public class DeleteTextHandler implements RequestStreamHandler {
 		JSONObject responseJson = new JSONObject();
 		responseJson.put("headers", headerJson);
 
-		DeleteCardResponse response = null;
+		DeleteTextResponse response = null;
 
 		// extract body from incoming HTTP DELETE request. If any error, then return 422
 		// error
@@ -55,7 +55,7 @@ public class DeleteTextHandler implements RequestStreamHandler {
 			}
 		} catch (ParseException pe) {
 			logger.log(pe.toString());
-			response = new DeleteCardResponse(400, "Bad Request:" + pe.getMessage()); // unable to process input
+			response = new DeleteTextResponse(400, "Bad Request:" + pe.getMessage()); // unable to process input
 			responseJson.put("body", new Gson().toJson(response));
 			processed = true;
 			body = null;
@@ -73,13 +73,14 @@ public class DeleteTextHandler implements RequestStreamHandler {
 			String pageId = req.pageId;
 
 			try {
-				if (dao.deleteText(elementId, pageId)) {
-					response = new DeleteCardResponse(200);
+				if (dao.deletePageElement(elementId, pageId)) {
+					dao.deleteText(elementId, pageId);
+					response = new DeleteTextResponse(200);
 				} else {
-					response = new DeleteCardResponse(400, "Unable to delete text.");
+					response = new DeleteTextResponse(400,"unable to delete text");
 				}
 			} catch (Exception e) {
-				response = new DeleteCardResponse(403, e.getMessage());
+				response = new DeleteTextResponse(403, e.getMessage());
 			}
 
 		}
