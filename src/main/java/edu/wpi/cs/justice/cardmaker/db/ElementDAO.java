@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import edu.wpi.cs.justice.cardmaker.model.Image;
+import edu.wpi.cs.justice.cardmaker.model.ImageUrl;
 import edu.wpi.cs.justice.cardmaker.model.Text;
 
 public class ElementDAO {
@@ -272,13 +273,13 @@ public class ElementDAO {
 		}
 	}
 
-	public ArrayList<String> getAllImage() throws Exception{
+	public ArrayList<ImageUrl> getAllImage() throws Exception{
         try {
-            ArrayList<String> imaUrls = new ArrayList<String>();
+            ArrayList<ImageUrl> imaUrls = new ArrayList<ImageUrl>();
             PreparedStatement ps = conn.prepareStatement("SELECT DISTINCT imageUrl FROM elements WHERE imageUrl IS NOT NULL");
             ResultSet resultSet = ps.executeQuery();
             while(resultSet.next()){
-                String imageUrl = resultSet.getString("imageUrl");
+				ImageUrl imageUrl= new ImageUrl(resultSet.getString("imageUrl"));
                 imaUrls.add(imageUrl);
             }
             return imaUrls;

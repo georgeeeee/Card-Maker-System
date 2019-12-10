@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import edu.wpi.cs.justice.cardmaker.http.ListImageResponse;
+import edu.wpi.cs.justice.cardmaker.model.ImageUrl;
 
 public class ListImageHandler implements RequestStreamHandler {
     public LambdaLogger logger = null;
@@ -24,7 +25,7 @@ public class ListImageHandler implements RequestStreamHandler {
      * 
      * @throws Exception
      */
-    ArrayList<String> getImages() throws Exception {
+    ArrayList<ImageUrl> getImages() throws Exception {
         if (logger != null) {
             logger.log("in getImages");
         }
@@ -48,7 +49,7 @@ public class ListImageHandler implements RequestStreamHandler {
 
         ListImageResponse response;
         try {
-            ArrayList<String> list = getImages();
+            ArrayList<ImageUrl> list = getImages();
 			response = new ListImageResponse(list, 200);
 		} catch (Exception e) {
 			response = new ListImageResponse(e.getMessage(), 403);
