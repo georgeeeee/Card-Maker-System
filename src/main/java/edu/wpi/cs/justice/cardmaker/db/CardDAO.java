@@ -199,7 +199,7 @@ public class CardDAO {
             ps.execute();
             ps.close();
             
-            return new Card(newcardId, card.getEventType(), card.getRecipient(), card.getOrientation());
+            return new Card(newcardId, card.getEventType(), recipientName, card.getOrientation());
     	} catch(Exception e) {
     		throw new Exception("Failed to duplicate card: " + e.getMessage());
     	}
