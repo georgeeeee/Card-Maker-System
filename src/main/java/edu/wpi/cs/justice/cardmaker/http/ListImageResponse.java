@@ -7,18 +7,18 @@ import edu.wpi.cs.justice.cardmaker.model.ImageUrl;
 
 
 public class ListImageResponse {
-	public  ArrayList<ImageUrl> ImgUrl;
+	public  ArrayList<ImageUrl> ImgList;
 	public final int statusCode;
 	public final String error;
 	
 	public ListImageResponse (ArrayList<ImageUrl> ImgUrl, int code) {
-		this.ImgUrl = ImgUrl;
+		this.ImgList = ImgUrl;
 		this.statusCode = code;
 		this.error = "";
 	}
 	
 	public ListImageResponse (String errorMessage, int code) {
-		this.ImgUrl = null;
+		this.ImgList = null;
 		this.statusCode = code;
 		this.error = errorMessage;
 	}

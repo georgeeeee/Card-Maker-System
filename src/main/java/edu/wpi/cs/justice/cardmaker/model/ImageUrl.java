@@ -1,16 +1,16 @@
 package edu.wpi.cs.justice.cardmaker.model;
 
 public class ImageUrl{
-    String Imageurl;
-    
+    String Url;
+
     public  ImageUrl(String ImageUrl) {
-        this.Imageurl = ImageUrl;
+        this.Url = ImageUrl;
     }
     public String getImageUrl() {
-        return Imageurl;
+        return Url;
     }
 
     public void setImageUrl(String imageUrl) {
-        this.Imageurl = imageUrl;
+        this.Url = imageUrl;
     }
 }
