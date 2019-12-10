@@ -16,7 +16,7 @@ import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.http.*;
 
-public class DeleteTextHandlerTest extends LambdaTest {
+public class DeleteElementHandlerTest extends LambdaTest {
 
 	@Test
 	public void testAddAndDeleteText() throws IOException {
@@ -52,7 +52,7 @@ public class DeleteTextHandlerTest extends LambdaTest {
         String testElementId = resp.text.getElementId();
         
         // Delete Text
-        DeleteTextRequest dtr = new DeleteTextRequest(testPageId, testElementId);
+        DeleteElementRequest dtr = new DeleteElementRequest(testPageId, testElementId);
         
         atRequest = new Gson().toJson(dtr);
         jsonRequest = new Gson().toJson(new PostRequest(atRequest));
@@ -60,20 +60,20 @@ public class DeleteTextHandlerTest extends LambdaTest {
         input = new ByteArrayInputStream(jsonRequest.getBytes());
         output = new ByteArrayOutputStream();
         
-        new DeleteTextHandler().handleRequest(input, output, createContext("deleteText"));
+        new DeleteElementHandler().handleRequest(input, output, createContext("deleteText"));
         
         post = new Gson().fromJson(output.toString(), PostResponse.class);
-        DeleteTextResponse d_resp = new Gson().fromJson(post.body, DeleteTextResponse.class);
+        DeleteElementResponse d_resp = new Gson().fromJson(post.body, DeleteElementResponse.class);
         Assert.assertEquals(200, d_resp.statusCode);
         
         // Try deleting again, should fail
         input = new ByteArrayInputStream(jsonRequest.getBytes());
         output = new ByteArrayOutputStream();
         
-        new DeleteTextHandler().handleRequest(input, output, createContext("deleteText"));
+        new DeleteElementHandler().handleRequest(input, output, createContext("deleteText"));
         
         post = new Gson().fromJson(output.toString(), PostResponse.class);
-        d_resp = new Gson().fromJson(post.body, DeleteTextResponse.class);
+        d_resp = new Gson().fromJson(post.body, DeleteElementResponse.class);
         Assert.assertEquals(400, d_resp.statusCode);
 	}
 

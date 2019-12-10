@@ -17,11 +17,10 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
 import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
+import edu.wpi.cs.justice.cardmaker.http.DeleteElementRequest;
+import edu.wpi.cs.justice.cardmaker.http.DeleteElementResponse;
 
-import edu.wpi.cs.justice.cardmaker.http.DeleteTextRequest;
-import edu.wpi.cs.justice.cardmaker.http.DeleteTextResponse;
-
-public class DeleteTextHandler implements RequestStreamHandler {
+public class DeleteElementHandler implements RequestStreamHandler {
 	public LambdaLogger logger = null;
 
 	@Override
@@ -37,7 +36,7 @@ public class DeleteTextHandler implements RequestStreamHandler {
 		JSONObject responseJson = new JSONObject();
 		responseJson.put("headers", headerJson);
 
-		DeleteTextResponse response = null;
+		DeleteElementResponse response = null;
 
 		// extract body from incoming HTTP DELETE request. If any error, then return 422
 		// error
@@ -55,14 +54,14 @@ public class DeleteTextHandler implements RequestStreamHandler {
 			}
 		} catch (ParseException pe) {
 			logger.log(pe.toString());
-			response = new DeleteTextResponse(400, "Bad Request:" + pe.getMessage()); // unable to process input
+			response = new DeleteElementResponse(400, "Bad Request:" + pe.getMessage()); // unable to process input
 			responseJson.put("body", new Gson().toJson(response));
 			processed = true;
 			body = null;
 		}
 
 		if (!processed) {
-			DeleteTextRequest req = new Gson().fromJson(body, DeleteTextRequest.class);
+			DeleteElementRequest req = new Gson().fromJson(body, DeleteElementRequest.class);
 			logger.log(req.toString());
 
 			ElementDAO dao = new ElementDAO();
@@ -75,12 +74,12 @@ public class DeleteTextHandler implements RequestStreamHandler {
 			try {
 				if (dao.deletePageElement(elementId, pageId)) {
 					dao.deleteText(elementId);
-					response = new DeleteTextResponse(200);
+					response = new DeleteElementResponse(200);
 				} else {
-					response = new DeleteTextResponse(400,"unable to delete text");
+					response = new DeleteElementResponse(400,"unable to delete text");
 				}
 			} catch (Exception e) {
-				response = new DeleteTextResponse(403, e.getMessage());
+				response = new DeleteElementResponse(403, e.getMessage());
 			}
 
 		}
