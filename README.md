@@ -6,8 +6,8 @@ Link for the Project: [Card Maker by Team Justice](https://master.d6ecpvwgxvbq1.
 Members: Hung Hong, Jianbing Yang, Sami Baral, Zhiyuan Chen
 
 ## Github
-Backend (Java, AWS Lambda function) : https://github.com/imaslarab/CS509-CardMaker
-Frontend (React hosted in AWS Amplity) : https://github.com/imaslarab/CS509-CardMaker-React
+* Backend (Java, AWS Lambda function) : https://github.com/imaslarab/CS509-CardMaker
+* Frontend (React hosted in AWS Amplity) : https://github.com/imaslarab/CS509-CardMaker-React
 
 ### Capabilities
 
