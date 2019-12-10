@@ -86,7 +86,7 @@ public class AddImageHandler implements RequestStreamHandler {
             	} else if ((Integer.valueOf(req.width) < 0) || (Integer.valueOf(req.height) < 0)) {
             		httpResponse = new AddImageResponse("Unable to add text: Invalid dimension values!", 400);
             	} else {
-					URL url = util.Util.GeneratePresignedUrl(req.fileName, "justice509");
+					URL url = util.Util.GeneratePresignedUrl("images/" + req.fileName, "justice509");
 					ElementDAO elementDAO = new ElementDAO();
 					String newImgId= util.Util.generateUniqueId();
 					Image newImage = new Image(newImgId, util.Util.generateS3BucketUrl(req.fileName), req.locationX, req.locationY, req.width, req.height);
