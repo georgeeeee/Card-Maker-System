@@ -74,7 +74,7 @@ public class DeleteTextHandler implements RequestStreamHandler {
 
 			try {
 				if (dao.deletePageElement(elementId, pageId)) {
-					dao.deleteText(elementId, pageId);
+					dao.deleteText(elementId);
 					response = new DeleteTextResponse(200);
 				} else {
 					response = new DeleteTextResponse(400,"unable to delete text");

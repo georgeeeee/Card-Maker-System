@@ -272,12 +272,11 @@ public class ElementDAO {
 			throw new Exception("Failed to delete text: " + e.getMessage());
 		}
 	}
-	public boolean deleteText(String elementId, String pageId) throws Exception {
+	public boolean deleteText(String elementId) throws Exception {
 		try {
 			PreparedStatement ps = conn
 					.prepareStatement("DELETE FROM elements WHERE element_id = ?;");
 			ps.setString(1, elementId);
-			ps.setString(2, pageId);
 			int numAffected = ps.executeUpdate();
 			ps.close();
 			return (numAffected == 1);
