@@ -2,17 +2,13 @@ package edu.wpi.cs.justice.cardmaker.http;
 
 import java.util.ArrayList;
 
-import edu.wpi.cs.justice.cardmaker.model.ImageUrl;
-
-
-
 public class ListImageResponse {
-	public  ArrayList<ImageUrl> ImgList;
+	public  ArrayList<String> ImgList;
 	public final int statusCode;
 	public final String error;
 	
-	public ListImageResponse (ArrayList<ImageUrl> ImgUrl, int code) {
-		this.ImgList = ImgUrl;
+	public ListImageResponse (ArrayList<String> list, int code) {
+		this.ImgList = list;
 		this.statusCode = code;
 		this.error = "";
 	}
