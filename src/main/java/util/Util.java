@@ -23,7 +23,7 @@ public class Util {
 	}
 	
 	public static String generateS3BucketUrl(String fileName) {
-		return "https://justice509.s3.amazonaws.com/images/" + fileName + "?versionId=null";
+		return "https://justice509.s3.amazonaws.com/images/" + fileName;
 	}
 	
 	public static URL GeneratePresignedUrl(String objectKey, String bucketName) throws Exception {
