@@ -6,11 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import edu.wpi.cs.justice.cardmaker.model.Image;
-import edu.wpi.cs.justice.cardmaker.model.Page;
 import edu.wpi.cs.justice.cardmaker.model.Text;
-import util.Util;
-
-import static com.amazonaws.util.AWSRequestMetrics.Field.Exception;
 
 public class ElementDAO {
 	java.sql.Connection conn;
@@ -276,4 +272,18 @@ public class ElementDAO {
 		}
 	}
 
+	public ArrayList<String> getAllImage() throws Exception{
+        try {
+            ArrayList<String> imaUrls = new ArrayList<String>();
+            PreparedStatement ps = conn.prepareStatement("SELECT DISTINCT imageUrl FROM elements WHERE imageUrl IS NOT NULL");
+            ResultSet resultSet = ps.executeQuery();
+            while(resultSet.next()){
+                String imageUrl = resultSet.getString("imageUrl");
+                imaUrls.add(imageUrl);
+            }
+            return imaUrls;
+        } catch (Exception e) {
+            throw new Exception("Failed to get images: " + e.getMessage());
+        }
+	}
 }
