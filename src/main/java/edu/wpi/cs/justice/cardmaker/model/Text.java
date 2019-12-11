@@ -1,5 +1,9 @@
 package edu.wpi.cs.justice.cardmaker.model;
 
+/** Text element in a card
+ *
+ *  @author justice509
+ */
 public class Text {
     final String elementId;
     String text;
@@ -31,7 +35,6 @@ public class Text {
     public String getFontSize() {
         return this.fontSize;
     }
-
     public void setFontSize(String fontSize) {
         this.fontSize = fontSize;
     }

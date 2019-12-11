@@ -16,12 +16,16 @@ import com.google.gson.Gson;
 import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import edu.wpi.cs.justice.cardmaker.http.ListImageResponse;
 
+/** List all the image urls existing in our RDS
+ *
+ *  @author justice509
+ */
 public class ListImageHandler implements RequestStreamHandler {
     public LambdaLogger logger = null;
 
-    /**
-     * Load from RDS, if it exists
-     * 
+    /** Load the images in RDS if exists
+     *
+     * @return list of urls for images
      * @throws Exception
      */
     ArrayList<String> getImages() throws Exception {
@@ -33,6 +37,13 @@ public class ListImageHandler implements RequestStreamHandler {
         return dao.getAllImage();
     }
 
+    /**
+     *
+     * @param input
+     * @param output
+     * @param context
+     * @throws IOException
+     */
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
         logger = context.getLogger();

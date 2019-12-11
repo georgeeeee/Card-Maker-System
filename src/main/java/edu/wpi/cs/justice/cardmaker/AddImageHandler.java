@@ -37,18 +37,26 @@ import edu.wpi.cs.justice.cardmaker.model.Image;
 import util.Util;
 
 /**
+ *
+ * Handler to upload images
+ *
+ * Handler receives image from front-end
+ * Generates and an ad-hoc url by image file name and return it
+ * The same url is used to upload image to s3 bucket
+ *
  * @author justice509
- * This is a handler for adding images
- * To upload the images
- * I)   handler receives image info from front-end
- * II)  generate and an ad-hoc url by image file name
- * III) return it to front-end
- * IV)  front end upload the image file 
  */
 public class AddImageHandler implements RequestStreamHandler {
 	private AmazonS3 s3;
 	LambdaLogger logger;
 
+	/**
+	 *
+	 * @param input
+	 * @param output
+	 * @param context
+	 * @throws IOException
+	 */
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
 		logger = context.getLogger();

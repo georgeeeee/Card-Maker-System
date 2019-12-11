@@ -16,11 +16,23 @@ import org.json.simple.parser.JSONParser;
 import java.io.*;
 import java.util.ArrayList;
 
+/** Edit a text element and update it in the RDS
+ * Edit either the text, locationX, locationY, fontName, fontType, fontSize
+ *
+ *  @author justice509
+ */
 public class EditTextHandler implements RequestStreamHandler{
     LambdaLogger logger;
     ElementDAO elementDAO;
     CardDAO cardDAO;
 
+    /**
+     *
+     * @param input
+     * @param output
+     * @param context
+     * @throws IOException
+     */
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
         logger = context.getLogger();

@@ -2,6 +2,10 @@ package edu.wpi.cs.justice.cardmaker.model;
 
 import java.util.ArrayList;
 
+/** Card Object
+ *
+ *  @author justice509
+ */
 public class Card {
 	final String cardId;
 	String eventType;

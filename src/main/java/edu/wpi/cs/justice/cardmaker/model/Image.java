@@ -1,5 +1,9 @@
 package edu.wpi.cs.justice.cardmaker.model;
 
+/** Image element in a card
+ *
+ *  @author justice509
+ */
 public class Image {
     final String elementId;
     String imageUrl;

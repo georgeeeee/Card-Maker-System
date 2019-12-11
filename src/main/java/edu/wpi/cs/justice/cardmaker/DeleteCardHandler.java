@@ -20,10 +20,22 @@ import edu.wpi.cs.justice.cardmaker.db.CardDAO;
 import edu.wpi.cs.justice.cardmaker.http.DeleteCardRequest;
 import edu.wpi.cs.justice.cardmaker.http.DeleteCardResponse;
 
+/**
+ * Delete a card from RDS based on the cardId
+ *
+ * @author justice509
+ */
 public class DeleteCardHandler implements RequestStreamHandler {
 
 	public LambdaLogger logger = null;
-	
+
+	/**
+	 *
+	 * @param input
+	 * @param output
+	 * @param context
+	 * @throws IOException
+	 */
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
     	logger = context.getLogger();

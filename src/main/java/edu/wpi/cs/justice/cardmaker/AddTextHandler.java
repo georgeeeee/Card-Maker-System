@@ -25,9 +25,27 @@ import edu.wpi.cs.justice.cardmaker.http.AddTextResponse;
 import edu.wpi.cs.justice.cardmaker.model.Text;
 import util.Util;
 
+/**
+ * Handler to add text elements to a card
+ *
+ * @author justice509
+ */
 public class AddTextHandler implements RequestStreamHandler {
     LambdaLogger logger;
 
+    /**
+     * Load Text element to RDS
+     *
+     * @param textString
+     * @param fontName
+     * @param fontSize
+     * @param locationX
+     * @param locationY
+     * @param pageId
+     * @param fontType
+     * @return
+     * @throws Exception
+     */
     Text AddText(String textString, String fontName, String fontSize, String locationX, String locationY, String pageId, String fontType) throws Exception {
         if (logger != null) {
             logger.log("in addText");
@@ -44,6 +62,13 @@ public class AddTextHandler implements RequestStreamHandler {
         return text;
     }
 
+    /**
+     *
+     * @param input
+     * @param output
+     * @param context
+     * @throws IOException
+     */
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
         logger = context.getLogger();

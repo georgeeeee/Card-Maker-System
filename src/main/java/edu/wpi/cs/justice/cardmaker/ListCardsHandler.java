@@ -17,10 +17,14 @@ import edu.wpi.cs.justice.cardmaker.db.CardDAO;
 import edu.wpi.cs.justice.cardmaker.http.ListCardsResponse;
 import edu.wpi.cs.justice.cardmaker.model.Card;
 
+/** List all the cards from the RDS
+ *
+ *  @author justice509
+ */
 public class ListCardsHandler implements RequestStreamHandler {
 	public LambdaLogger logger = null;
 
-	/** Load from RDS, if it exists
+	/** Load Cards from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
@@ -30,7 +34,14 @@ public class ListCardsHandler implements RequestStreamHandler {
 		
 		return dao.getAllCards();
 	}
-    
+
+	/**
+	 *
+	 * @param input
+	 * @param output
+	 * @param context
+	 * @throws IOException
+	 */
 	@Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
 		logger = context.getLogger();

@@ -22,11 +22,23 @@ import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import edu.wpi.cs.justice.cardmaker.http.EditImageRequest;
 import edu.wpi.cs.justice.cardmaker.http.EditImageResponse;
 
+/** Edit a image element and update it in the RDS
+ * Edit locationX, locationY, width, height or image file for the element
+ *
+ * @author justice509
+ */
 public class EditImageHandler implements RequestStreamHandler{
 	LambdaLogger logger;
     ElementDAO elementDAO;
     CardDAO cardDAO;
 
+    /**
+     *
+     * @param input
+     * @param output
+     * @param context
+     * @throws IOException
+     */
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
 		logger = context.getLogger();

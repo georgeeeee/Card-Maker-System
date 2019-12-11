@@ -20,9 +20,20 @@ import edu.wpi.cs.justice.cardmaker.db.ElementDAO;
 import edu.wpi.cs.justice.cardmaker.http.DeleteElementRequest;
 import edu.wpi.cs.justice.cardmaker.http.DeleteElementResponse;
 
+/** Delete image or text elements in a page from RDS
+ *
+ *  @author justice509
+ */
 public class DeleteElementHandler implements RequestStreamHandler {
 	public LambdaLogger logger = null;
 
+	/**
+	 *
+	 * @param input
+	 * @param output
+	 * @param context
+	 * @throws IOException
+	 */
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
 		logger = context.getLogger();

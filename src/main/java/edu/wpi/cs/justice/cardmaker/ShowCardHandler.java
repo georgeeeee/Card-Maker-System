@@ -26,12 +26,23 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-
+/** List all the pages and the elements in it from RDS to display a card
+ * Simply return a card with list of all the pages in it and its elements
+ *
+ *  @author justice509
+ */
 public class ShowCardHandler implements RequestStreamHandler{
 	private LambdaLogger logger = null;
 	private CardDAO cardDao = new CardDAO();
 	private ElementDAO elementDAO = new ElementDAO();
 
+	/**
+	 *
+	 * @param input
+	 * @param output
+	 * @param context
+	 * @throws IOException
+	 */
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
 		logger = context.getLogger();
@@ -74,6 +85,7 @@ public class ShowCardHandler implements RequestStreamHandler{
 			try {
 				Card card = cardDao.getCard(cardId);
 				ArrayList<Page> pages = cardDao.getPage(cardId);
+				// For all the pages set the texts and images
 				for (Page page : pages){
 					page.setTexts(elementDAO.getTexts(page.getPageId()));
 					page.setImages(elementDAO.getImages(page.getPageId()));

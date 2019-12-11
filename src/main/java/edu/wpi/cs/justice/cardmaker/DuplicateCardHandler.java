@@ -26,10 +26,21 @@ import edu.wpi.cs.justice.cardmaker.model.Card;
 import edu.wpi.cs.justice.cardmaker.model.Page;
 import util.Util;
 
-
+/** Duplicate a card based on cardID and assign it to a new recipient
+ *
+ * @author justice509
+ */
 public class DuplicateCardHandler implements RequestStreamHandler {
 	LambdaLogger logger;
-	
+
+	/** Load the card from RDS and all its pages and elements
+	 * Create a duplicate the card for a new recipient to the RDS
+	 *
+	 * @param cardId
+	 * @param recipientName
+	 * @return
+	 * @throws Exception
+	 */
 	Card duplicateCard(String cardId, String recipientName) throws Exception {
         try {
             if (logger != null) { logger.log("!duplicateCard"); }
@@ -51,7 +62,14 @@ public class DuplicateCardHandler implements RequestStreamHandler {
         }
         return null; // shouldn't be here
 	}
-	
+
+	/**
+	 *
+	 * @param input
+	 * @param output
+	 * @param context
+	 * @throws IOException
+	 */
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
     	logger = context.getLogger();

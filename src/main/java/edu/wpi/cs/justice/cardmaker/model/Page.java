@@ -2,6 +2,10 @@ package edu.wpi.cs.justice.cardmaker.model;
 
 import java.util.ArrayList;
 
+/** Pages in a card
+ *
+ *  @author justice509
+ */
 public class Page {
 	final String cardId;
 	final String pageId;

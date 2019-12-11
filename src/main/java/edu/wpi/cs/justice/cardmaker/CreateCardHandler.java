@@ -26,13 +26,21 @@ import edu.wpi.cs.justice.cardmaker.model.Page;
 import util.Util;
 
 /**
- * Create a new card.
+ * Create a new card and store it in RDS
 
- * @author sami
+ * @author justice509
  */
 public class CreateCardHandler implements RequestStreamHandler {
 	LambdaLogger logger;
-	
+
+	/** Load card to RDS
+	 *
+	 * @param eventType
+	 * @param recipient
+	 * @param orientation
+	 * @return
+	 * @throws Exception
+	 */
 	Card createCard(String eventType, String recipient, String orientation) throws Exception {
 		if (logger != null) { logger.log("in createCard"); }
 		CardDAO dao = new CardDAO();
@@ -47,6 +55,11 @@ public class CreateCardHandler implements RequestStreamHandler {
 		return card;
 	}
 
+	/** Adds all four pages to a card in the RDS once it is created
+	 *
+	 * @param card
+	 * @throws Exception
+	 */
 	public void addPageRequest(Card card) throws Exception{
 		CardDAO dao = new CardDAO();
 		ArrayList<Page> pages = new ArrayList<Page>();
@@ -57,7 +70,14 @@ public class CreateCardHandler implements RequestStreamHandler {
 		
 		dao.addPages(pages);
 	}
-	
+
+	/**
+	 *
+	 * @param input
+	 * @param output
+	 * @param context
+	 * @throws IOException
+	 */
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
     	logger = context.getLogger();
